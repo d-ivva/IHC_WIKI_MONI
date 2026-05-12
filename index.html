@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Engenharia de Usabilidade — MONI — Ciclo 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+/* ─── RESET & TOKENS ──────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --blue-900: #0a1f44;
+  --blue-800: #0d2d63;
+  --blue-700: #1246a0;
+  --blue-600: #1a5ce8;
+  --blue-500: #2e74ff;
+  --blue-400: #5b91ff;
+  --blue-100: #dce9ff;
+  --blue-50:  #f0f5ff;
+  --white:    #ffffff;
+  --gray-50:  #f8f9fc;
+  --gray-100: #eef1f7;
+  --gray-200: #dde2ee;
+  --gray-400: #8f9ab5;
+  --gray-600: #4a5578;
+  --gray-800: #1e2740;
+  
+  /* ── CORES DE SEVERIDADE (ALTO CONTRASTE E SATURAÇÃO) ── */
+  --red:        #dc2626; /* Vermelho vivo e enérgico */
+  --red-bg:     #fef2f2;
+  
+  --orange:     #f97316; /* Laranja puro e vibrante */
+  --orange-bg:  #fff7ed;
+  
+  --yellow:     #facc15; /* Amarelo puro, solar e saturado */
+  --yellow-bg:  #fefce8;
+  --yellow-txt: #854d0e; /* Tom escurecido para dar contraste e leitura perfeita no texto */
+  
+  --green:    #059669;
+  --green-bg: #f0fdf4;
+  
+  --sans: 'Montserrat', sans-serif;
+  --body: 'Inter', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --shadow-sm: 0 1px 3px rgba(10,31,68,0.08), 0 1px 2px rgba(10,31,68,0.04);
+  --shadow-md: 0 4px 16px rgba(10,31,68,0.10), 0 2px 6px rgba(10,31,68,0.06);
+  --shadow-lg: 0 12px 40px rgba(10,31,68,0.12), 0 4px 12px rgba(10,31,68,0.07);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--body);
+  background: var(--white);
+  color: var(--gray-800);
+  font-size: 15px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── CODE INLINE ──────────────────────────────────────── */
+code, .mono {
+  font-family: var(--mono);
+  font-size: 0.85em;
+  background: var(--blue-50);
+  color: var(--blue-700);
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--blue-100);
+}
+
+/* ─── SCROLL REVEAL ─────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.55s cubic-bezier(.22,1,.36,1),
+              transform 0.55s cubic-bezier(.22,1,.36,1);
+}
+.reveal.visible { opacity: 1; transform: none; }
+.d1 { transition-delay: .08s; }
+.d2 { transition-delay: .16s; }
+.d3 { transition-delay: .24s; }
+.d4 { transition-delay: .32s; }
+.d5 { transition-delay: .40s; }
+
+/* ══════════════════════════════════════════════════════════
+   COVER
+══════════════════════════════════════════════════════════ */
+.cover {
+  min-height: 100vh;
+  background: var(--blue-900);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 10vw;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+}
+
+/* Animated dot grid */
+.cover-canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Mouse-follow spotlight */
+.cover-spotlight {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    600px circle at var(--mx, 50%) var(--my, 40%),
+    rgba(46,116,255,0.18) 0%,
+    rgba(18,70,160,0.08) 40%,
+    transparent 70%
+  );
+  pointer-events: none;
+  transition: background 0.05s linear;
+}
+
+/* Floating orbs */
+.cover-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(80px);
+  opacity: 0.25;
+  transition: transform 0.8s cubic-bezier(.22,1,.36,1);
+}
+.cover-orb-1 {
+  width: 500px; height: 500px;
+  background: var(--blue-600);
+  top: -120px; right: -80px;
+}
+.cover-orb-2 {
+  width: 320px; height: 320px;
+  background: #0d4fa8;
+  bottom: -80px; left: 10%;
+}
+
+/* Cover content */
+.cover-content { position: relative; max-width: 820px; }
+
+.cover-eyebrow {
+  font-family: var(--mono);
+  font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--blue-400);
+  margin-bottom: 28px;
+  display: flex; align-items: center; gap: 12px;
+}
+.cover-eyebrow-line {
+  width: 36px; height: 1px; background: var(--blue-600);
+}
+
+.cover-title {
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: clamp(40px, 6.5vw, 76px);
+  line-height: 1.0;
+  letter-spacing: -2px;
+  color: var(--white);
+  margin-bottom: 20px;
+}
+.cover-title .blue-word { color: var(--blue-400); }
+
+.cover-subtitle {
+  font-family: var(--body);
+  font-size: 17px;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 56px;
+  font-weight: 400;
+}
+
+.cover-rule { width: 100%; height: 1px; background: rgba(255,255,255,0.08); margin-bottom: 40px; }
+
+.cover-meta {
+  display: grid;
+  grid-template-columns: repeat(6, auto);
+  gap: 10px 0;
+  align-items: start;
+}
+.cover-meta-item { padding-right: 40px; }
+.cover-meta-label {
+  font-family: var(--mono);
+  font-size: 9px; color: rgba(255,255,255,0.3);
+  text-transform: uppercase; letter-spacing: 2px;
+  margin-bottom: 5px;
+}
+.cover-meta-value {
+  font-family: var(--sans);
+  font-size: 13px; font-weight: 600; color: var(--white);
+}
+
+.cover-scroll-hint {
+  position: absolute;
+  bottom: 36px; left: 10vw;
+  font-family: var(--mono);
+  font-size: 10px; color: rgba(255,255,255,0.2);
+  letter-spacing: 2px; text-transform: uppercase;
+  display: flex; align-items: center; gap: 10px;
+}
+.cover-scroll-arrow {
+  width: 20px; height: 20px;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px;
+  animation: bounce 2.2s ease-in-out infinite;
+}
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(4px); }
+}
+
+/* ══════════════════════════════════════════════════════════
+   PAGE LAYOUT
+══════════════════════════════════════════════════════════ */
+.page { max-width: 960px; margin: 0 auto; padding: 88px 28px; }
+
+/* ─── CYCLE HEADER ──────────────────────────────────────── */
+.cycle-header {
+  display: flex; align-items: flex-start; gap: 28px;
+  padding-bottom: 40px;
+  border-bottom: 2px solid var(--blue-100);
+  margin-bottom: 72px;
+}
+.cycle-num-block {
+  flex-shrink: 0;
+  width: 64px; height: 64px;
+  background: var(--blue-900);
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+}
+.cycle-num {
+  font-family: var(--sans);
+  font-size: 26px; font-weight: 900; color: var(--white); letter-spacing: -1px;
+}
+.cycle-tag {
+  font-family: var(--mono);
+  font-size: 10px; color: var(--blue-600);
+  text-transform: uppercase; letter-spacing: 3px; margin-bottom: 6px;
+}
+.cycle-title {
+  font-family: var(--sans);
+  font-size: 28px; font-weight: 800; color: var(--blue-900); letter-spacing: -0.5px;
+}
+.cycle-authors {
+  font-family: var(--mono);
+  font-size: 11px; color: var(--gray-400); margin-top: 6px;
+}
+
+/* ─── SECTION ────────────────────────────────────────────── */
+.section { margin-bottom: 80px; }
+
+.section-kicker {
+  font-family: var(--mono);
+  font-size: 10px; color: var(--blue-500);
+  text-transform: uppercase; letter-spacing: 3px;
+  margin-bottom: 8px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-kicker::before {
+  content: '';
+  width: 24px; height: 2px; background: var(--blue-500);
+  display: block;
+}
+
+.section-title {
+  font-family: var(--sans);
+  font-size: 22px; font-weight: 800; color: var(--blue-900);
+  letter-spacing: -0.3px; margin-bottom: 18px;
+}
+
+.section-body {
+  font-size: 14.5px; color: var(--gray-600); line-height: 1.8;
+}
+.section-body p { margin-bottom: 12px; }
+.section-body strong { color: var(--gray-800); font-weight: 600; }
+
+/* ─── DATA TABLE ────────────────────────────────────────── */
+.data-table {
+  width: 100%; border-collapse: collapse;
+  margin: 20px 0;
+  border-radius: 12px; overflow: hidden;
+  border: 1px solid var(--gray-200);
+}
+.data-table tr { border-bottom: 1px solid var(--gray-100); }
+.data-table tr:last-child { border-bottom: none; }
+.data-table td {
+  padding: 13px 18px; font-size: 13.5px; vertical-align: top;
+}
+.data-table td:first-child {
+  font-family: var(--mono);
+  font-size: 10px; color: var(--gray-400);
+  text-transform: uppercase; letter-spacing: 1px;
+  width: 160px; padding-top: 16px;
+  background: var(--gray-50);
+  border-right: 1px solid var(--gray-100);
+}
+.data-table td:last-child { color: var(--gray-700, #374162); }
+
+/* ─── CALLOUT ───────────────────────────────────────────── */
+.callout {
+  display: flex; gap: 14px;
+  padding: 18px 22px;
+  border-radius: 12px;
+  margin: 20px 0;
+  border-left: 3px solid;
+}
+.callout-icon { font-size: 20px; flex-shrink: 0; }
+.callout-body {}
+.callout-head {
+  font-family: var(--sans);
+  font-size: 12px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1px; margin-bottom: 5px;
+}
+.callout-text { font-size: 13.5px; line-height: 1.7; }
+.callout-text strong { font-weight: 600; }
+
+.callout.info  { background: var(--blue-50);  border-color: var(--blue-500); }
+.callout.info  .callout-head { color: var(--blue-700); }
+.callout.info  .callout-text { color: var(--blue-800); }
+.callout.warn  { background: var(--orange-bg); border-color: var(--orange); }
+.callout.warn  .callout-head { color: var(--orange); }
+.callout.warn  .callout-text { color: #78420a; }
+.callout.error { background: var(--red-bg); border-color: var(--red); }
+.callout.error .callout-head { color: var(--red); }
+.callout.error .callout-text { color: #7a1f1f; }
+.callout.next  { background: var(--green-bg); border-color: var(--green); }
+.callout.next  .callout-head { color: var(--green); }
+.callout.next  .callout-text { color: #065535; }
+
+/* ─── PERSONA ────────────────────────────────────────────── */
+.persona-card {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  border: 1px solid var(--gray-200);
+  border-radius: 16px;
+  overflow: hidden;
+  margin: 20px 0;
+  box-shadow: var(--shadow-md);
+}
+.persona-left {
+  background: var(--blue-900);
+  padding: 32px 20px;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center;
+}
+.persona-avatar {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--blue-600);
+  border: 3px solid rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; margin-bottom: 14px;
+}
+.persona-name-display {
+  font-family: var(--sans);
+  font-size: 15px; font-weight: 700; color: var(--white); margin-bottom: 3px;
+}
+.persona-role-display {
+  font-family: var(--mono);
+  font-size: 9px; color: rgba(255,255,255,0.4); text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+.persona-chips { margin-top: 20px; display: flex; flex-direction: column; gap: 5px; }
+.persona-chip {
+  font-family: var(--mono); font-size: 8.5px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.5);
+  padding: 4px 10px; border-radius: 20px; text-align: center;
+}
+.persona-right { padding: 24px 28px; background: var(--white); }
+.persona-row {
+  display: grid; grid-template-columns: 110px 1fr;
+  gap: 8px; padding: 10px 0;
+  border-bottom: 1px solid var(--gray-100);
+  align-items: start;
+}
+.persona-row:last-child { border-bottom: none; }
+.pk {
+  font-family: var(--mono);
+  font-size: 9px; color: var(--gray-400);
+  text-transform: uppercase; letter-spacing: 1px; padding-top: 2px;
+}
+.pv { font-size: 13px; color: var(--gray-700, #3f4a66); line-height: 1.6; }
+
+/* ─── PROBLEM CARDS ─────────────────────────────────────── */
+.problems { display: flex; flex-direction: column; gap: 12px; margin: 24px 0; }
+
+.prob {
+  display: grid;
+  grid-template-columns: 72px 1fr 140px;
+  gap: 20px; align-items: center;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 20px 24px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.25s, transform 0.25s, border-color 0.25s;
+}
+.prob:hover {
+  transform: translateX(4px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Cores dinâmicas de borda e sombra no Hover */
+.prob.p-red:hover    { border-color: var(--red);    box-shadow: 0 4px 20px rgba(220, 38, 38, 0.12); }
+.prob.p-orange:hover { border-color: var(--orange); box-shadow: 0 4px 20px rgba(249, 115, 22, 0.12); }
+.prob.p-yellow:hover { border-color: var(--yellow); box-shadow: 0 4px 20px rgba(250, 204, 21, 0.12); }
+
+.prob-id {
+  font-family: var(--sans);
+  font-size: 26px; font-weight: 900;
+  letter-spacing: -1px; line-height: 1; text-align: center;
+}
+
+/* Cores do ID (P1, P2...) */
+.prob.p-red    .prob-id { color: var(--red); }
+.prob.p-orange .prob-id { color: var(--orange); }
+.prob.p-yellow .prob-id { color: var(--yellow); }
+
+.prob-screen {
+  font-family: var(--mono);
+  font-size: 9px; color: var(--gray-400);
+  text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px;
+}
+.prob-title {
+  font-family: var(--sans);
+  font-size: 14px; font-weight: 700; color: var(--blue-900); margin-bottom: 5px;
+}
+.prob-desc { font-size: 13px; color: var(--gray-600); line-height: 1.6; }
+.prob-heur {
+  font-family: var(--mono);
+  font-size: 9.5px; color: var(--blue-500);
+  margin-top: 8px; display: flex; align-items: center; gap: 5px;
+}
+.prob-heur::before { content: '//'; color: var(--gray-200); }
+
+/* Severidades (Pills e Dots) */
+.sev-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px; border-radius: 20px;
+  font-family: var(--mono); font-size: 10px; font-weight: 600;
+  white-space: nowrap; justify-self: end;
+}
+.sev-pill.red    { background: var(--red-bg);    color: var(--red);        border: 1px solid rgba(220, 38, 38, 0.25); }
+.sev-pill.orange { background: var(--orange-bg); color: var(--orange);     border: 1px solid rgba(249, 115, 22, 0.25); }
+.sev-pill.yellow { background: var(--yellow-bg); color: var(--yellow-txt); border: 1px solid rgba(250, 204, 21, 0.4); }
+
+.sev-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.sev-dot.red    { background: var(--red); }
+.sev-dot.orange { background: var(--orange); }
+.sev-dot.yellow { background: var(--yellow); }
+
+/* ─── BROWSER FRAME ─────────────────────────────────────── */
+.browser-wrap {
+  margin: 12px 0;
+}
+.browser {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+.browser:hover {
+  box-shadow: 0 20px 60px rgba(10,31,68,0.14);
+  transform: translateY(-3px);
+}
+.browser-bar {
+  background: var(--gray-100);
+  border-bottom: 1px solid var(--gray-200);
+  padding: 10px 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.browser-dots { display: flex; gap: 6px; }
+.browser-dot { width: 11px; height: 11px; border-radius: 50%; }
+.browser-dot.r { background: #ff5f57; }
+.browser-dot.y { background: #febc2e; }
+.browser-dot.g { background: #28c840; }
+.browser-url-box {
+  flex: 1; background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 6px; padding: 4px 12px;
+  display: flex; align-items: center; gap: 6px;
+}
+.browser-lock { font-size: 10px; color: var(--gray-400); }
+.browser-url-text {
+  font-family: var(--mono);
+  font-size: 10.5px; color: var(--gray-600);
+}
+/* Image slot */
+.img-slot {
+  background: var(--gray-50);
+  min-height: 300px;
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.img-slot img {
+  width: 100%; height: auto; display: block;
+}
+.img-slot .ph {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 12px;
+}
+.img-slot img ~ .ph { display: none; }
+.ph-icon {
+  width: 52px; height: 52px; border-radius: 12px;
+  border: 1.5px dashed var(--gray-200);
+  background: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+.ph-text {
+  font-family: var(--mono);
+  font-size: 11px; color: var(--gray-400);
+  text-align: center; line-height: 1.6;
+}
+.ph-text code { background: transparent; border: none; color: var(--blue-400); padding: 0; font-size: 10px; }
+
+.browser-caption {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  padding: 10px 0 0;
+}
+.b-chip {
+  font-family: var(--mono); font-size: 9.5px; font-weight: 500;
+  padding: 3px 10px; border-radius: 20px;
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.b-chip.red    { background: var(--red-bg);    color: var(--red);        border: 1px solid rgba(220, 38, 38, 0.2); }
+.b-chip.orange { background: var(--orange-bg); color: var(--orange);     border: 1px solid rgba(249, 115, 22, 0.2); }
+.b-chip.yellow { background: var(--yellow-bg); color: var(--yellow-txt); border: 1px solid rgba(250, 204, 21, 0.35); }
+
+.b-chip-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.b-chip.red    .b-chip-dot { background: var(--red); }
+.b-chip.orange .b-chip-dot { background: var(--orange); }
+.b-chip.yellow .b-chip-dot { background: var(--yellow); }
+
+/* ─── SCREENS PAIR ──────────────────────────────────────── */
+.screens-pair {
+  display: grid;
+  grid-template-columns: 1fr 48px 1fr;
+  gap: 0; align-items: start;
+  margin: 20px 0;
+}
+.pair-arrow {
+  display: flex; align-items: center; justify-content: center;
+  padding-top: 80px; color: var(--gray-200);
+}
+.pair-arrow svg { width: 24px; height: 24px; }
+.pair-label {
+  font-family: var(--mono); font-size: 9px;
+  text-transform: uppercase; letter-spacing: 2px;
+  margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+}
+.pair-label.step1 { color: var(--gray-400); }
+.pair-label.step2 { color: var(--red); }
+.pair-label::before { content: '→'; font-size: 10px; }
+.pair-caption {
+  font-size: 12px; color: var(--gray-400); margin-top: 8px;
+  text-align: center; line-height: 1.5;
+}
+.pair-caption.danger { color: var(--red); font-weight: 500; }
+
+/* ─── DIVIDER ───────────────────────────────────────────── */
+.rule { height: 1px; background: var(--gray-100); margin: 64px 0; }
+
+/* ─── REFLECTION ────────────────────────────────────────── */
+.refl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+.refl-card {
+  border: 1px solid var(--gray-200); border-radius: 14px;
+  padding: 26px; background: var(--white);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.25s;
+}
+.refl-card:hover { box-shadow: var(--shadow-md); }
+.refl-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.refl-av {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--blue-900);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.refl-name { font-family: var(--sans); font-size: 13px; font-weight: 700; color: var(--blue-900); }
+.refl-role { font-family: var(--mono); font-size: 9px; color: var(--gray-400); margin-top: 1px; }
+.refl-body {
+  font-size: 13.5px; color: var(--gray-600); line-height: 1.75; font-style: italic;
+}
+.refl-body strong { color: var(--blue-900); font-style: normal; font-weight: 600; }
+
+/* ─── FOOTER ────────────────────────────────────────────── */
+.footer {
+  background: var(--blue-900);
+  padding: 48px 10vw;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.footer-left {}
+.footer-label {
+  font-family: var(--mono);
+  font-size: 9px; color: rgba(255,255,255,0.3);
+  text-transform: uppercase; letter-spacing: 2px; margin-bottom: 4px;
+}
+.footer-member { font-family: var(--sans); font-size: 13px; font-weight: 600; color: var(--white); }
+.footer-member-role { font-family: var(--mono); font-size: 10px; color: rgba(255,255,255,0.35); }
+.footer-center {
+  font-family: var(--sans); font-size: 11px; font-weight: 700;
+  color: rgba(255,255,255,0.2); letter-spacing: 1px; text-transform: uppercase;
+}
+.footer-right { text-align: right; }
+
+@media print {
+  .reveal { opacity: 1 !important; transform: none !important; }
+}
+</style>
+</head>
+<body>
+
+<section class="cover" id="cover">
+  <canvas class="cover-canvas" id="dotCanvas"></canvas>
+  <div class="cover-spotlight" id="spotlight"></div>
+  <div class="cover-orb cover-orb-1" id="orb1"></div>
+  <div class="cover-orb cover-orb-2" id="orb2"></div>
+
+  <div class="cover-content">
+    <div class="cover-eyebrow">
+      <div class="cover-eyebrow-line"></div>
+      Interface Humano Computador · IHC
+    </div>
+
+    <h1 class="cover-title">
+      Engenharia de Usabilidade -
+      <span class="blue-word">Sistema MONI </span>
+    </h1>
+
+    <p class="cover-subtitle">Avaliação 2 | WIKI Colaborativa</p>
+
+    <div class="cover-rule"></div>
+
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Sistema</div>
+        <div class="cover-meta-value">MONI / Monitoria UFSC</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Dupla</div>
+        <div class="cover-meta-value">Arthur Bauer &amp; Diva Hennemann</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Professor</div>
+        <div class="cover-meta-value">Prof. Matheus Cataneo</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Semestre</div>
+        <div class="cover-meta-value">2026 / 1</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Fluxo</div>
+        <div class="cover-meta-value">Home → Registro de Horário da Monitoria</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cover-scroll-hint">
+    <div class="cover-scroll-arrow">↓</div>
+    Role para baixo
+  </div>
+</section>
+
+<main class="page">
+
+  <div class="cycle-header reveal">
+    <div class="cycle-num-block">
+      <div class="cycle-num">01</div>
+    </div>
+    <div>
+      <div class="cycle-tag">Ciclo 1</div>
+      <div class="cycle-title">Contexto e Diagnóstico Inicial</div>
+      <div class="cycle-authors">Arthur Bauer Cardoso — Avaliador &nbsp;·&nbsp; Diva Moreira de Souza Hennemann — Avaliadora</div>
+    </div>
+  </div>
+
+  <div class="section reveal">
+    <div class="section-kicker">1.1</div>
+    <div class="section-title">Sistema Escolhido</div>
+    <div class="section-body">
+      <p>O sistema avaliado é o <strong>MONI</strong> (<code>moni.sistemas.ufsc.br</code>), desenvolvido pela SeTIC e pela Pró-Reitoria de Graduação da UFSC, em busca de informatizar os processos do Programa de Monitoria, regulamentado pela <code>RN nº 53/CUn/2015</code>.</p>
+      <p>O sistema atende três perfis — <strong>monitores</strong>, <strong>supervisores</strong> e <strong>alunos</strong> — e gerencia planos de atividades, horários de atendimento, frequência, relatórios e certificados.</p>
+      <p>Em suma: </p>
+    </div>
+
+    <table class="data-table reveal d1">
+      <tr><td>Nome</td><td>MONI — Sistema de Monitoria UFSC</td></tr>
+      <tr><td>URL</td><td><code>moni.sistemas.ufsc.br</code></td></tr>
+      <tr><td>Tipo</td><td>Aplicação web — desktop</td></tr>
+      <tr><td>Tecnologia</td><td>HTML tradicional sem framework moderno de UI</td></tr>
+      <tr><td>Público</td><td>Monitores, professores supervisores e alunos da UFSC <code>Analisado o Módulo do monitor</code></td></tr>
+      <tr><td>Fluxo</td><td>Página Home → Cadastro de Horários da Monitoria </td></tr>
+    </table>
+
+    <div class="callout info reveal d2">
+      <div class="callout-icon">🔍</div>
+      <div class="callout-body">
+        <div class="callout-head">Escopo do Fluxo Analisado</div>
+        <div class="callout-text">Analisamos o <strong>fluxo de cadastro de horários da monitoria</strong> obrigatório para todo monitor ativo, que consiste em: (1) tela inicial após autenticação e (2) cadastro de horários de atendimento. A interface desse fluxo apresenta os problemas mais críticos perante análise heurística e tem impacto direto no início da bolsa e navegação geral.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+
+  <div class="section reveal">
+      <div class="section-kicker">1.2</div>
+      <div class="section-title">Público Alvo</div>
+      <div class="section-body">
+        <p>O MONI busca atender a três perfis principais, familiarizados com páginas web no uso cotidiano:</p>
+        <p>1 - Monitor: Registrar atividades semanais, horários e emitir certificado de conclusão da monitoria.</p>
+        <p>2 - Supervisor: Avaliar o monitor, validar o plano de atividades e registrar frequências.</p>
+        <p>3 - Estudante: Consultar disciplinas com monitoria disponível, horários de atendimento e avaliar o monitor.</p>
+      </div>
+    </div> <div class="rule"></div>
+
+    <div class="section reveal">
+      <div class="section-kicker">1.2.1</div>
+      <div class="section-title">Persona</div>
+      <div class="section-body">
+        <p>A Persona representa o usuário ideal do sistema e foi construída com base no perfil de monitor — estudante de graduação em TIC, atuando como bolsista na disciplina de Algoritmos e Programação.</p>
+      </div>
+
+    <div class="persona-card reveal d1">
+      <div class="persona-left">
+        <div class="persona-avatar">👨‍💻</div>
+        <div class="persona-name-display">Lucas Ferreira</div>
+        <div class="persona-role-display">Monitor Bolsista · 20 anos</div>
+        <div class="persona-chips">
+          <div class="persona-chip">CIT7580 · TIC UFSC</div>
+          <div class="persona-chip">4ª fase</div>
+          <div class="persona-chip">Usuário avançado</div>
+        </div>
+      </div>
+      <div class="persona-right">
+        <div class="persona-row">
+          <div class="pk">Curso</div>
+          <div class="pv">Tecnologias da Informação e Comunicação — UFSC Araranguá</div>
+        </div>
+        <div class="persona-row">
+          <div class="pk">Tecnologia</div>
+          <div class="pv">Usa GitHub, IDEs e Moodle diariamente. Confortável com sistemas web.</div>
+        </div>
+        <div class="persona-row">
+          <div class="pk">Motivação</div>
+          <div class="pv">Registrar horários no início do semestre para garantir o pagamento da bolsa.</div>
+        </div>
+        <div class="persona-row">
+          <div class="pk">Frustração</div>
+          <div class="pv">Não se localiza no sistema diante do menu; não sabe se as informações foram preenchidas corretamente.</div>
+        </div>
+        <div class="persona-row">
+          <div class="pk">Contexto</div>
+          <div class="pv">Acessa rapidamente entre aulas, no laboratório ou em casa, geralmente com pressa.</div>
+        </div>
+        <div class="persona-row">
+          <div class="pk">Objetivo</div>
+          <div class="pv">Cadastrar horários de atendimento com confirmação clara de que foram salvos.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout warn reveal d2">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body">
+        <div class="callout-head">Impacto Real para a Persona</div>
+        <div class="callout-text">Conforme o Manual do MONI, a ausência do registro dos horários implica no <strong>bloqueio do pagamento da bolsa</strong> e impede o cadastro da disciplina no semestre seguinte.  <strong>Erros silenciosos têm consequências financeiras e acadêmicas</strong> reais para Lucas, para o discente e para os alunos que necessitam da monitoria.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+
+  <div class="section reveal">
+    <div class="section-kicker">1.3</div>
+    <div class="section-title">Diagnóstico — Avaliação Heurística</div>
+    <div class="section-body">
+      <p>Com base nas <strong>10 Heurísticas de Nielsen</strong>, identificamos 4 problemas nos dois passos do fluxo analisado.</p>
+    </div>
+
+    <div class="problems">
+
+      <div class="prob p-orange reveal d1">
+        <div class="prob-id">P1</div>
+        <div>
+          <div class="prob-screen">Tela: Página Home</div>
+          <div class="prob-title">Ausência de feedback visual na navegação</div>
+          <div class="prob-desc">Nenhum item recebe destaque ao passar o mouse ou ao representar a página ativa. O usuário não consegue identificar onde está dentro do sistema.</div>
+          <div class="prob-heur">H1 — Visibilidade do status do sistema</div>
+        </div>
+        <div class="sev-pill orange"><span class="sev-dot orange"></span> Severo 4/5</div>
+      </div>
+
+      <div class="prob p-orange reveal d2">
+        <div class="prob-id">P2</div>
+        <div>
+          <div class="prob-screen">Tela: Página Home</div>
+          <div class="prob-title">Alta densidade informacional no menu</div>
+          <div class="prob-desc">Três categorias com 15 subcategorias em texto plano, exibidas simultaneamente sem hierarquia visual, ícones ou agrupamento. Provoca sobrecarga cognitiva.</div>
+          <div class="prob-heur">H8 — Estética e design minimalista</div>
+        </div>
+        <div class="sev-pill orange"><span class="sev-dot orange"></span> Severo 4/5</div>
+      </div>
+
+      <div class="prob p-yellow reveal d3">
+        <div class="prob-id">P3</div>
+        <div>
+          <div class="prob-screen">Tela: Página Home</div>
+          <div class="prob-title">Layout sem hierarquia visual clara</div>
+          <div class="prob-desc">Tela inicial exibe aviso crítico em texto solto, sem estrutura de card e não há botões de ação que guiem o monitor para as tarefas prioritárias ou próximos passos. Eleva o esforço cognitivo.</div>
+          <div class="prob-heur">H6 — Reconhecimento em vez de memorização</div>
+        </div>
+        <div class="sev-pill yellow"><span class="sev-dot yellow"></span> Alerta 3/5</div>
+      </div>
+
+      <div class="prob p-red reveal d4">
+        <div class="prob-id">P4</div>
+        <div>
+          <div class="prob-screen">Tela: Horários da Monitoria</div>
+          <div class="prob-title">Envio sem validação + feedback falso de sucesso</div>
+          <div class="prob-desc">Botão <code>Enviar</code> disponível sem horários cadastrados. Sistema retorna <code>"Horário cadastrado com sucesso"</code> mesmo sem dados. Nada é salvo — feedback completamente enganoso.</div>
+          <div class="prob-heur">H5 — Prevenção de erros &nbsp; · &nbsp; H9 — Recuperação de erros</div>
+        </div>
+        <div class="sev-pill red"><span class="sev-dot red"></span> Crítico 5/5</div>
+      </div>
+
+    </div>
+
+    <div class="callout error reveal d5">
+      <div class="callout-icon">🚨</div>
+      <div class="callout-body">
+        <div class="callout-head">Risco Crítico — P4</div>
+        <div class="callout-text">O monitor recebe uma <strong>mensagem de sucesso falsa</strong> e segue sua rotina acreditando que o cadastro foi concluído. Semanas depois descobre que os horários não existem e sua bolsa será bloqueada — o sistema não notifica o monitor automaticamente, dependendo da verificação manual do professor supervisor.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+
+  <div class="section reveal">
+    <div class="section-kicker">1.4</div>
+    <div class="section-title">Telas Originais — Problemas Evidenciados</div>
+
+    <p style="font-family:var(--mono);font-size:10px;color:var(--gray-400);text-transform:uppercase;letter-spacing:2px;margin-bottom:14px;">Tela 01 · Home</p>
+
+    <div class="browser-wrap reveal d1">
+      <div class="browser">
+        <div class="browser-bar">
+          <div class="browser-dots">
+            <div class="browser-dot r"></div>
+            <div class="browser-dot y"></div>
+            <div class="browser-dot g"></div>
+          </div>
+          <div class="browser-url-box">
+            <span class="browser-lock">🔒</span>
+            <span class="browser-url-text">moni.sistemas.ufsc.br/monitor/home</span>
+          </div>
+        </div>
+        <div class="img-slot">
+          <div class="ph">
+            <div class="ph-icon">🖼️</div>
+            <div class="ph-text">
+              Print da tela <strong>Home do MONI</strong><br>
+              <img src="https://i.postimg.cc/qM4MvLG0/print-home.png" alt="Home MONI">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="browser-caption">
+        <span class="b-chip orange"><span class="b-chip-dot"></span> P1 — Sem estado ativo no menu</span>
+        <span class="b-chip orange"><span class="b-chip-dot"></span> P2 — Alta densidade informacional</span>
+        <span class="b-chip yellow"><span class="b-chip-dot"></span> P3 — Layout sem hierarquia visual</span>
+      </div>
+    </div>
+
+    <p style="font-family:var(--mono);font-size:10px;color:var(--gray-400);text-transform:uppercase;letter-spacing:2px;margin:40px 0 14px;">Tela 02 · Horários da Monitoria — Problema P4</p>
+
+    <div class="screens-pair reveal d1">
+      <div>
+        <div class="pair-label step1">① Formulário sem horários</div>
+        <div class="browser">
+          <div class="browser-bar">
+            <div class="browser-dots">
+              <div class="browser-dot r"></div>
+              <div class="browser-dot y"></div>
+              <div class="browser-dot g"></div>
+            </div>
+            <div class="browser-url-box">
+              <span class="browser-lock">🔒</span>
+              <span class="browser-url-text">moni.sistemas.ufsc.br/monitor/horario</span>
+            </div>
+          </div>
+          <div class="img-slot" style="min-height:220px;">
+              <img src="https://i.postimg.cc/FH1vYnkH/print-horario-vazio.png" alt="Formulário vazio">
+          </div>
+        </div>
+        <div class="pair-caption">Botão "Enviar" disponível<br>sem horários adicionados</div>
+      </div>
+
+      <div class="pair-arrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M5 12h14M13 6l6 6-6 6"/>
+        </svg>
+      </div>
+
+      <div>
+        <div class="pair-label step2">② Falsa mensagem de sucesso</div>
+        <div class="browser">
+          <div class="browser-bar">
+            <div class="browser-dots">
+              <div class="browser-dot r"></div>
+              <div class="browser-dot y"></div>
+              <div class="browser-dot g"></div>
+            </div>
+            <div class="browser-url-box">
+              <span class="browser-lock">🔒</span>
+              <span class="browser-url-text">moni.sistemas.ufsc.br/monitor/horario</span>
+            </div>
+          </div>
+          <div class="img-slot" style="min-height:220px;">
+              <img src="https://i.postimg.cc/C5FTSvp4/print-sucesso-falso.png" alt="Mensagem de sucesso falsa">
+          </div>
+        </div>
+        <div class="pair-caption danger">⚠ "Cadastrado com sucesso"<br>— tabela permanece vazia</div>
+      </div>
+    </div>
+
+    <div class="callout error reveal d2">
+      <div class="callout-icon">🔴</div>
+      <div class="callout-body">
+        <div class="callout-head">P4 Evidenciado — Sequência Crítica</div>
+        <div class="callout-text">
+          Botão <code>Enviar</code> disponível sem dados →
+          sistema exibe <code>"Horário cadastrado com sucesso"</code> →
+          tabela permanece vazia.
+          Falha em três pontos: não <strong>preveniu</strong> o envio vazio, não <strong>validou</strong> a entrada e comunicou <strong>sucesso onde houve falha</strong>.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+
+  
+  <div class="section reveal">
+    <div class="section-kicker">Próximos Passos</div>
+    <div class="section-title">Ciclo 2: Prototipação e Redesign</div>
+    <div style="background: var(--gray-50); border: 2px dashed var(--gray-200); border-radius: 16px; padding: 40px; text-align: center;">
+      <div style="font-size: 40px; margin-bottom: 15px;">🏗️</div>
+      <h3 style="font-family: var(--sans); color: var(--blue-900); margin-bottom: 10px;">Em construção...</h3>
+      <p style="color: var(--gray-600); max-width: 500px; margin: 0 auto; font-size: 14px;">
+        No próximo ciclo, apresentaremos a proposta de reformulação da interface, focando na <strong>correção dos erros apresentados</strong> e no design da página inicial.
+      </p>
+    </div>
+  </div>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-left">
+    <div class="footer-label">Dupla</div>
+    <div class="footer-member">Arthur Bauer Cardoso</div>
+    <div class="footer-member-role">Ciclo 1 · Avaliação heurística &amp; capturas</div>
+  </div>
+  <div class="footer-center">MONI · UFSC · 2026/1</div>
+  <div class="footer-right">
+    <div class="footer-label">Parceiro</div>
+    <div class="footer-member">Diva Moreira de Souza Hennemann</div>
+    <div class="footer-member-role">Ciclo 1 · Avaliação heurística &amp; documentação</div>
+  </div>
+</footer>
+
+<script>
+/* ── Dot-grid canvas ── */
+(function() {
+  const canvas = document.getElementById('dotCanvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, dots = [];
+  let mouseX = -9999, mouseY = -9999;
+
+  const COLS = 28, ROWS = 18, RADIUS = 1.4, MAX_DIST = 120;
+
+  function resize() {
+    W = canvas.width  = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+    buildDots();
+  }
+
+  function buildDots() {
+    dots = [];
+    const gx = W / COLS, gy = H / ROWS;
+    for (let r = 0; r <= ROWS; r++) {
+      for (let c = 0; c <= COLS; c++) {
+        dots.push({
+          ox: c * gx, oy: r * gy,
+          x:  c * gx, y:  r * gy
+        });
+      }
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    for (const d of dots) {
+      const dx = d.ox - mouseX, dy = d.oy - mouseY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const push = Math.max(0, (MAX_DIST - dist) / MAX_DIST);
+
+      /* repel toward mouse center */
+      d.x = d.ox + (dx / (dist || 1)) * push * -22;
+      d.y = d.oy + (dy / (dist || 1)) * push * -22;
+
+      const alpha = 0.15 + push * 0.55;
+      const size  = RADIUS + push * 2;
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, size, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(91,145,255,${alpha})`;
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+
+  const cover = document.getElementById('cover');
+  cover.addEventListener('mousemove', e => {
+    const r = canvas.getBoundingClientRect();
+    mouseX = e.clientX - r.left;
+    mouseY = e.clientY - r.top;
+  });
+  cover.addEventListener('mouseleave', () => { mouseX = -9999; mouseY = -9999; });
+
+  window.addEventListener('resize', resize);
+  resize();
+  draw();
+})();
+
+/* ── Spotlight follow ── */
+(function() {
+  const spotlight = document.getElementById('spotlight');
+  const cover = document.getElementById('cover');
+  cover.addEventListener('mousemove', e => {
+    const r = cover.getBoundingClientRect();
+    const x = ((e.clientX - r.left) / r.width  * 100).toFixed(1) + '%';
+    const y = ((e.clientY - r.top)  / r.height * 100).toFixed(1) + '%';
+    spotlight.style.background = `radial-gradient(600px circle at ${x} ${y}, rgba(46,116,255,0.22) 0%, rgba(18,70,160,0.09) 40%, transparent 70%)`;
+  });
+  cover.addEventListener('mouseleave', () => {
+    spotlight.style.background = `radial-gradient(600px circle at 50% 40%, rgba(46,116,255,0.12) 0%, transparent 70%)`;
+  });
+})();
+
+/* ── Orb parallax ── */
+(function() {
+  const orb1 = document.getElementById('orb1');
+  const orb2 = document.getElementById('orb2');
+  const cover = document.getElementById('cover');
+  cover.addEventListener('mousemove', e => {
+    const r = cover.getBoundingClientRect();
+    const nx = (e.clientX - r.left) / r.width  - 0.5;
+    const ny = (e.clientY - r.top)  / r.height - 0.5;
+    orb1.style.transform = `translate(${nx * -30}px, ${ny * -30}px)`;
+    orb2.style.transform = `translate(${nx * 20}px, ${ny * 20}px)`;
+  });
+})();
+
+/* ── Scroll reveal ── */
+(function() {
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.07, rootMargin: '0px 0px -32px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+})();
+</script>
+</body>
+</html>
