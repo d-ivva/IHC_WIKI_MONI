@@ -166,6 +166,7 @@ const IcoTrash    = ({s=15}) => <Svg size={s}><polyline points="3 6 5 6 21 6"/><
 const IcoAlert    = ({s=18}) => <Svg size={s}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></Svg>;
 const IcoSend     = ({s=16}) => <Svg size={s}><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></Svg>;
 const IcoSearch   = ({s=14}) => <Svg size={s}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></Svg>;
+const IcoExtLink  = ({s=14}) => <Svg size={s}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></Svg>;
 
 /* ══════════════════════════════════════════════════════
    NAV STRUCTURE
@@ -207,6 +208,7 @@ const NAV = [
     items: [
       { id: 'manual',    label: 'Manual',              Icon: IcoInfo },
       { id: 'resolucao', label: 'Resolução Normativa', Icon: IcoShield },
+      { id: 'edital',    label: 'Edital de Seleção de Monitores', Icon: IcoExtLink, href: 'https://souufsc.ara.ufsc.br/oportunidades/' },
     ],
   },
 ];
@@ -587,7 +589,7 @@ function Sidebar({ page, onNav, th }) {
                       <SidebarItem
                         key={item.id}
                         active={item.id === page}
-                        onClick={() => onNav(item.id)}
+                        onClick={() => item.href ? window.open(item.href, '_blank', 'noopener') : onNav(item.id)}
                         icon={<item.Icon />}
                         label={item.label}
                         badge={item.badge}
