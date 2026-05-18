@@ -957,14 +957,86 @@ code, .mono {
   
   <div class="section reveal">
     <div class="section-kicker">Próximos Passos</div>
-    <div class="section-title">Ciclo 2: Prototipação e Redesign</div>
-    <div style="background: var(--gray-50); border: 2px dashed var(--gray-200); border-radius: 16px; padding: 40px; text-align: center;">
-      <div style="font-size: 40px; margin-bottom: 15px;">🏗️</div>
-      <h3 style="font-family: var(--sans); color: var(--blue-900); margin-bottom: 10px;">Em construção...</h3>
-      <p style="color: var(--gray-600); max-width: 500px; margin: 0 auto; font-size: 14px;">
-        No próximo ciclo, apresentaremos a proposta de reformulação da interface, focando na <strong>correção dos erros apresentados</strong> e no design da página inicial.
-      </p>
+    <div class="section-title">Ciclo 2: Prototipação</div>
+
+    <p style="color: var(--gray-600); max-width: 680px; margin-bottom: 28px; font-size: 14px; line-height: 1.8;">
+      Protótipo interativo de alta fidelidade desenvolvido com base nas heurísticas violadas identificadas no Ciclo 1.
+      Esta versão buscou mitigar os problemas <strong>P1 → P4</strong> identificados e incorpora validações e melhor hierarquia visual.
+      Explore abaixo ou abra em tela cheia para interagir livremente.
+    </p>
+
+    <!-- ── Mockup wrapper ── -->
+    <div style="
+      background: #0a1f44;
+      border-radius: 20px;
+      padding: 28px 28px 0;
+      box-shadow: 0 24px 64px rgba(10,31,68,0.22), 0 4px 16px rgba(10,31,68,0.12);
+      position: relative;
+      overflow: hidden;
+    ">
+      <!-- Top chrome bar -->
+      <div style="
+        display: flex; align-items: center; gap: 12px;
+        margin-bottom: 16px;
+      ">
+        <!-- Traffic lights -->
+        <div style="display:flex; gap:6px; flex-shrink:0;">
+          <div style="width:12px;height:12px;border-radius:50%;background:#ff5f57;"></div>
+          <div style="width:12px;height:12px;border-radius:50%;background:#febc2e;"></div>
+          <div style="width:12px;height:12px;border-radius:50%;background:#28c840;"></div>
+        </div>
+        <!-- Fake URL bar -->
+        <div style="
+          flex:1; background:rgba(255,255,255,0.08); border-radius:7px;
+          padding: 5px 12px; display:flex; align-items:center; gap:6px;
+        ">
+          <span style="font-size:11px; opacity:.5;">🔒</span>
+          <span style="font-size:11.5px; color:rgba(255,255,255,0.55); font-family:var(--mono); letter-spacing:0.2px;">
+            moni.sistemas.ufsc.br · protótipo interativo
+          </span>
+        </div>
+        <!-- Open full button -->
+        <a href="prototipo/index.html" target="_blank" style="
+          flex-shrink:0;
+          display:inline-flex; align-items:center; gap:6px;
+          background: var(--blue-500); color:#fff;
+          font-family: var(--sans); font-size:12px; font-weight:700;
+          padding: 6px 14px; border-radius:8px; text-decoration:none;
+          white-space:nowrap;
+          transition: background .15s, transform .15s;
+          box-shadow: 0 2px 8px rgba(46,116,255,0.35);
+        "
+        onmouseover="this.style.background='#1a5ce8';this.style.transform='translateY(-1px)'"
+        onmouseout="this.style.background='#2e74ff';this.style.transform=''"
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+          Abrir em tela cheia
+        </a>
+      </div>
+
+      <!-- iframe -->
+      <div style="
+        border-radius: 10px 10px 0 0;
+        overflow: hidden;
+        height: 540px;
+        box-shadow: 0 0 0 1px rgba(255,255,255,0.07) inset;
+        position: relative;
+      ">
+        <iframe
+          src="prototipo/index.html"
+          title="Protótipo MONI — Ciclo 2"
+          style="width:100%; height:100%; border:none; display:block;"
+          loading="lazy"
+        ></iframe>
+      </div>
     </div>
+
+    <p style="margin-top:14px; font-size:12px; color:var(--gray-400); text-align:center; font-family:var(--mono); letter-spacing:0.3px;">
+      ↑ clique e interaja diretamente · ou use "Abrir em tela cheia" para experiência completa
+    </p>
   </div>
 
 </main>
