@@ -616,6 +616,136 @@ code, .mono {
 }
 .footer-right { text-align: right; }
 
+/* ─── PEER REVIEW ────────────────────────────────────────── */
+.review-band {
+  background: var(--blue-50);
+  border: 1px solid var(--blue-100);
+  border-radius: 20px;
+  padding: 36px 40px;
+  margin: 0 0 0;
+}
+.review-band-header {
+  display: flex; align-items: center; gap: 16px; margin-bottom: 28px;
+}
+.review-band-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  background: var(--blue-900);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.review-band-title {
+  font-family: var(--sans);
+  font-size: 18px; font-weight: 800; color: var(--blue-900);
+  letter-spacing: -0.3px;
+}
+.review-band-sub {
+  font-family: var(--mono);
+  font-size: 10px; color: var(--blue-500);
+  text-transform: uppercase; letter-spacing: 2px; margin-top: 3px;
+}
+.reviews-list { display: flex; flex-direction: column; gap: 14px; }
+.review-card {
+  background: var(--white);
+  border: 1px solid var(--blue-100);
+  border-radius: 14px;
+  padding: 22px 24px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.25s, transform 0.2s;
+}
+.review-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateX(3px);
+}
+.review-card-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 12px; gap: 12px;
+}
+.review-author {
+  display: flex; align-items: center; gap: 10px;
+}
+.review-av {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--blue-900);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; flex-shrink: 0;
+  color: var(--white);
+  font-family: var(--sans); font-weight: 700; font-size: 13px;
+}
+.review-name {
+  font-family: var(--sans);
+  font-size: 13px; font-weight: 700; color: var(--blue-900);
+}
+.review-id {
+  font-family: var(--mono);
+  font-size: 9px; color: var(--gray-400); margin-top: 2px;
+}
+.review-date {
+  font-family: var(--mono);
+  font-size: 9px; color: var(--gray-400); white-space: nowrap; flex-shrink: 0;
+}
+.review-body {
+  font-size: 13.5px; color: var(--gray-600); line-height: 1.8;
+}
+.review-body strong { color: var(--blue-900); font-weight: 600; }
+
+/* ─── CONTEXT BANNER ─────────────────────────────────────── */
+.context-banner {
+  background: var(--blue-900);
+  border-radius: 16px;
+  padding: 32px 36px;
+  margin: 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 24px;
+  align-items: start;
+}
+.ctx-num {
+  font-family: var(--sans);
+  font-size: 56px; font-weight: 900; color: rgba(255,255,255,0.08);
+  line-height: 1; letter-spacing: -3px; flex-shrink: 0;
+}
+.ctx-body {}
+.ctx-tag {
+  font-family: var(--mono);
+  font-size: 10px; color: var(--blue-400);
+  text-transform: uppercase; letter-spacing: 3px; margin-bottom: 8px;
+}
+.ctx-title {
+  font-family: var(--sans);
+  font-size: 20px; font-weight: 800; color: var(--white);
+  letter-spacing: -0.3px; margin-bottom: 12px;
+}
+.ctx-text {
+  font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.8;
+}
+.ctx-text strong { color: var(--blue-400); font-weight: 600; }
+.ctx-pills {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px;
+}
+.ctx-pill {
+  font-family: var(--mono); font-size: 10px;
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.6);
+  padding: 4px 12px; border-radius: 20px;
+}
+
+/* ─── PLACEHOLDER REVIEWS ───────────────────────────────── */
+.reviews-placeholder {
+  background: var(--gray-50);
+  border: 2px dashed var(--gray-200);
+  border-radius: 16px;
+  padding: 36px;
+  text-align: center;
+}
+.reviews-placeholder-icon { font-size: 32px; margin-bottom: 12px; }
+.reviews-placeholder-title {
+  font-family: var(--sans); font-size: 15px; font-weight: 700;
+  color: var(--blue-900); margin-bottom: 8px;
+}
+.reviews-placeholder-text {
+  font-size: 13px; color: var(--gray-400); line-height: 1.7;
+}
+
 @media print {
   .reveal { opacity: 1 !important; transform: none !important; }
 }
@@ -954,7 +1084,101 @@ code, .mono {
 
   <div class="rule"></div>
 
-  
+  <!-- ═══ AVALIAÇÃO DE PARES — CICLO 1 ═══ -->
+  <div class="section reveal">
+    <div class="section-kicker">Avaliação de Pares</div>
+    <div class="section-title">Feedback Recebido — Ciclo 1</div>
+    <p style="font-size:14px;color:var(--gray-600);margin-bottom:24px;max-width:680px;line-height:1.8;">
+      Após a publicação do Ciclo 1 na WIKI do Moodle, três colegas avaliaram o diagnóstico e deixaram contribuições que orientaram as decisões de design do Ciclo 2.
+    </p>
+
+    <div class="review-band reveal d1">
+      <div class="review-band-header">
+        <div class="review-band-icon">💬</div>
+        <div>
+          <div class="review-band-title">3 comentários recebidos</div>
+          <div class="review-band-sub">Ciclo 1 · WIKI Moodle · Maio 2026</div>
+        </div>
+      </div>
+      <div class="reviews-list">
+
+        <div class="review-card">
+          <div class="review-card-head">
+            <div class="review-author">
+              <div class="review-av">LF</div>
+              <div>
+                <div class="review-name">Luis Antonio Scarabelot Fiabani</div>
+                <div class="review-id">Matrícula 24102006</div>
+              </div>
+            </div>
+            <div class="review-date">13 mai. 2026 · 16:43</div>
+          </div>
+          <div class="review-body">
+            O trabalho traz um diagnóstico bem consistente do MONI, principalmente no que diz respeito à <strong>visibilidade de estado, prevenção de erros e redução de carga cognitiva</strong>. Chama atenção como P2 e P3 demonstram problemas clássicos de ergonomia cognitiva. Já P4 evidencia uma <strong>falha grave de gestão de erros e de feedback</strong>, em que o sistema não só deixa de validar como ainda reforça um "sucesso" inexistente, gerando consequências reais para o monitor. No próximo ciclo, faz sentido que o redesign ataque diretamente esses pontos com <strong>hierarquia visual mais clara, feedback honesto e validações mais rígidas</strong>, aproximando o fluxo de registro de horários de um modelo mais seguro e ergonomicamente adequado.
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-card-head">
+            <div class="review-author">
+              <div class="review-av">IO</div>
+              <div>
+                <div class="review-name">Ivy Oliveira dos Reis</div>
+                <div class="review-id">Matrícula 24103142</div>
+              </div>
+            </div>
+            <div class="review-date">13 mai. 2026 · 17:10</div>
+          </div>
+          <div class="review-body">
+            A análise heurística está muito bem fundamentada, especialmente na identificação desse <strong>"falso sucesso" no P4</strong>, que é uma quebra crítica de integridade no modelo mental do usuário. Pro redesign, acredito que o ideal seja focar no <strong>Princípio da Revelação Progressiva</strong>: aquele menu com 15 itens mata a carga cognitiva de quem está na correria. Tentar agrupar as funções por contexto ou trocar o menu lateral por um <strong>Dashboard de Tarefas com cards de atalho</strong> para o que é prioritário no início do semestre. Outra coisa essencial é aplicar <strong>Constraint Design no fluxo de horários</strong>: o botão de enviar deve permanecer desabilitado enquanto a lista estiver vazia, e o feedback de sucesso precisa de uma validação real de persistência de dados.
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-card-head">
+            <div class="review-author">
+              <div class="review-av">KR</div>
+              <div>
+                <div class="review-name">Karolini Roncani Pedrozo</div>
+                <div class="review-id">Matrícula 23201001</div>
+              </div>
+            </div>
+            <div class="review-date">16 mai. 2026 · 21:16</div>
+          </div>
+          <div class="review-body">
+            A heurística do MONI para diagnóstico é de primeira, principalmente ao destacar a gravidade do <strong>"falso sucesso" (P4)</strong>, que viola a H1 (Visibilidade do Status) e quebra a confiança do usuário. No Ciclo 2, para o redesign, sugiro aplicar a <strong>Lei de Hick ao menu lateral</strong>, organizando os 15 itens em 3 ou 4 blocos semânticos, o que diminuiria a carga cognitiva de maneira mais eficiente. Adicionalmente, no protótipo, a implementação de <strong>Inline Validation</strong> (validação em tempo real) nos campos de horários aumentaria significativamente a Prevenção de Erros (H5), orientando o usuário a corrigir antes mesmo de tentar enviar.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+
+  <!-- ═══ CONTEXTO CICLO 2 ═══ -->
+  <div class="section reveal">
+    <div class="context-banner">
+      <div class="ctx-num">02</div>
+      <div class="ctx-body">
+        <div class="ctx-tag">Ciclo 2 · Proposta de Melhoria</div>
+        <div class="ctx-title">O que mudou com base no feedback</div>
+        <div class="ctx-text">
+          Os três avaliadores convergiram em pontos essenciais: o <strong>menu sobrecarregado</strong> precisava de agrupamento semântico (Lei de Hick), o <strong>botão Enviar</strong> deveria ser bloqueado enquanto a lista de horários estivesse vazia (Constraint Design), e o <strong>feedback de sucesso falso</strong> precisava ser eliminado com validação real de persistência. Com base nesses insumos, o protótipo do Ciclo 2 reorganiza a navegação em blocos de contexto, introduz um dashboard com cards de tarefas prioritárias e aplica inline validation no fluxo de horários — endereçando diretamente os problemas P1 a P4 identificados no diagnóstico.
+        </div>
+        <div class="ctx-pills">
+          <span class="ctx-pill">✓ Lei de Hick — menu agrupado</span>
+          <span class="ctx-pill">✓ Constraint Design — botão desabilitado</span>
+          <span class="ctx-pill">✓ Inline Validation — campos de horário</span>
+          <span class="ctx-pill">✓ Revelação Progressiva — dashboard</span>
+          <span class="ctx-pill">✓ Feedback honesto — sem falso sucesso</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+
   <div class="section reveal">
     <div class="section-kicker">Próximos Passos</div>
     <div class="section-title">Ciclo 2: Prototipação e Redesign</div>
@@ -1041,16 +1265,194 @@ code, .mono {
 
   <div class="rule"></div>
 
+  <!-- ═══ AVALIAÇÃO DE PARES — CICLO 2 ═══ -->
   <div class="section reveal">
-    <div class="section-kicker">Próximos Passos</div>
-    <div class="section-title">Ciclo 3: Avaliação e Iteração</div>
-    <div style="background: var(--gray-50); border: 2px dashed var(--gray-200); border-radius: 16px; padding: 40px; text-align: center;">
-      <div style="font-size: 40px; margin-bottom: 15px;">🏗️</div>
-      <h3 style="font-family: var(--sans); color: var(--blue-900); margin-bottom: 10px;">Em construção...</h3>
-      <p style="color: var(--gray-600); max-width: 500px; margin: 0 auto; font-size: 14px;">
-        No próximo ciclo, apresentaremos a avaliação do protótipo redesenhado, com testes de usabilidade e iterações baseadas no feedback dos usuários.
-      </p>
+    <div class="section-kicker">Avaliação de Pares</div>
+    <div class="section-title">Feedback Recebido — Ciclo 2</div>
+    <p style="font-size:14px;color:var(--gray-600);margin-bottom:24px;max-width:680px;line-height:1.8;">
+      Comentários das duplas avaliadores sobre o protótipo desenvolvido no Ciclo 2, publicados na WIKI do Moodle.
+    </p>
+    <div class="review-band reveal d1">
+      <div class="review-band-header">
+        <div class="review-band-icon">💬</div>
+        <div>
+          <div class="review-band-title">4 comentários recebidos</div>
+          <div class="review-band-sub">Ciclo 2 · WIKI Moodle · Maio 2026</div>
+        </div>
+      </div>
+      <div class="reviews-list">
+
+        <div class="review-card">
+          <div class="review-card-head">
+            <div class="review-author">
+              <div class="review-av">DG</div>
+              <div>
+                <div class="review-name">Develin Souza Gonçalves</div>
+                <div class="review-id">Matrícula 24102015</div>
+              </div>
+            </div>
+            <div class="review-date">19 mai. 2026 · 15:43</div>
+          </div>
+          <div class="review-body">
+            Ao implementar a <strong>caixa de busca dinâmica no menu lateral</strong>, expandindo automaticamente os subgrupos à medida que o monitor digita, minimiza-se drasticamente o esforço cognitivo de navegação. Adicionalmente, é evidente o ganho em usabilidade ao introduzir o <strong>componente de notificação após o clique em "Enviar para Aprovação"</strong>, respondendo diretamente à Heurística 1 (Visibilidade do Status) ao detalhar que os dados foram remetidos com sucesso para homologação do supervisor.<br><br>
+            Como sugestão de melhoria, a inclusão de um <strong>histórico ou indicador de "Últimas Buscas"</strong> logo abaixo da barra de pesquisa reduziria ainda mais a carga de memória do monitor, aplicando a H6 (Reconhecimento em vez de Memorização) para atalhos rápidos e tarefas recorrentes na rotina da persona.
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-card-head">
+            <div class="review-author">
+              <div class="review-av">AJ</div>
+              <div>
+                <div class="review-name">Artur Manarin de Jesus</div>
+                <div class="review-id">Matrícula 24105747</div>
+              </div>
+            </div>
+            <div class="review-date">19 mai. 2026 · 19:32</div>
+          </div>
+          <div class="review-body">
+            A aplicação mostra <strong>significativa evolução na redução da carga cognitiva</strong> ao adicionar a busca na barra lateral. Houve grande melhoria no feedback ao tentar adicionar horários, aplicando conceitos de <strong>prevenção de erros e visibilidade do status</strong> por meio de validações inline.<br><br>
+            Dois problemas novos foram identificados: no campo <strong>"Local da Monitoria"</strong>, a necessidade de clicar uma vez por caractere aponta para falha no <em>focus handling</em>, quebrando a continuidade da ação e violando a heurística de eficiência de uso. No campo de <strong>hora/minuto</strong>, a área clicável reduzida exige precisão excessiva — violação da <strong>Lei de Fitts</strong> — recomendando-se expandir o alvo ou permitir inserção direta via teclado.<br><br>
+            Sugestões adicionais: incluir <strong>aceleradores de navegação</strong> (páginas favoritas) para usuários frequentes, e mapear o clique na logo ao retorno à Home, reforçando a <strong>heurística de consistência e padrões</strong> já consolidada na web.
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-card-head">
+            <div class="review-author">
+              <div class="review-av">LF</div>
+              <div>
+                <div class="review-name">Luis Antonio Scarabelot Fiabani</div>
+                <div class="review-id">Matrícula 24102006</div>
+              </div>
+            </div>
+            <div class="review-date">21 mai. 2026 · 19:22</div>
+          </div>
+          <div class="review-body">
+            O protótipo apresenta uma evolução consistente em relação ao diagnóstico do Ciclo 1, e as decisões de design estão alinhadas com os pontos levantados pelos colegas nas rodadas anteriores. A <strong>reorganização semântica do menu</strong> e a <strong>validação inline nos campos de horário</strong> atacam diretamente os problemas de carga cognitiva e prevenção de erros identificados. Concordo com as observações do Ciclo 2 sobre o <em>focus handling</em> e a Lei de Fitts — são pontos que merecem atenção no refinamento.<br><br>
+            Um ponto que ainda merece atenção é o <strong>comportamento da notificação de envio</strong>: ela aparece corretamente ao clicar em "Enviar para Aprovação", o que representa um avanço real na H1, porém a notificação <strong>não desaparece automaticamente após o envio do plano</strong>, permanecendo visível de forma indefinida na tela. Isso pode gerar confusão sobre o estado atual do processo — o usuário não sabe se ainda está pendente ou se a ação já foi concluída.
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-card-head">
+            <div class="review-author">
+              <div class="review-av">IO</div>
+              <div>
+                <div class="review-name">Ivy Oliveira dos Reis</div>
+                <div class="review-id">Matrícula 24103142</div>
+              </div>
+            </div>
+            <div class="review-date">Mai. 2026 · 19:32</div>
+          </div>
+          <div class="review-body">
+            Concordo com os pontos levantados pelos colegas — as melhorias no menu e nas validações inline representam um avanço significativo em relação ao Ciclo 1, e o problema da notificação que permanece visível indefinidamente é uma inconsistência importante que ainda precisa ser resolvida.<br><br>
+            Um ponto adicional que percebi: o <strong>indicador de notificação está presente apenas no item "Monitor" do menu lateral</strong>, mas está ausente no item <strong>"Horários da Monitoria"</strong>, que é justamente uma das seções mais críticas do fluxo analisado. Considerando que é nessa tela que o monitor precisa confirmar o cadastro dos horários — ação diretamente vinculada ao recebimento da bolsa — a ausência do símbolo de notificação nesse item quebra a <strong>consistência visual do sistema</strong> (H4) e pode fazer com que o monitor não perceba pendências nessa área tão facilmente quanto nas demais.
+          </div>
+        </div>
+
+      </div>
     </div>
+  </div>
+
+  <div class="rule"></div>
+
+  <div class="section reveal">
+    <div class="section-kicker">Ciclo 3</div>
+    <div class="section-title">Avaliação com Pares e Refinamento Final</div>
+
+    <div class="context-banner reveal d1" style="margin-bottom:28px;">
+      <div class="ctx-num">03</div>
+      <div class="ctx-body">
+        <div class="ctx-tag">Ciclo 3 · Validação entre Pares</div>
+        <div class="ctx-title">O que será feito nesta etapa</div>
+        <div class="ctx-text">
+          Os avaliadores do Ciclo 2 confirmaram a evolução na navegação e validação, mas apontaram <strong>novos problemas de interação</strong>: falha de foco no campo "Local da Monitoria" e área clicável reduzida no seletor de hora (violação da Lei de Fitts). No Ciclo 3, o protótipo é submetido a uma nova rodada de <strong>avaliação entre colegas</strong> — estudantes que também estão conduzindo seus próprios ciclos de usabilidade em outros sistemas. Eles navegam pelo protótipo e avaliam teoricamente se as soluções implementadas endereçam os problemas identificados, gerando insumos para o refinamento final.
+        </div>
+        <div class="ctx-pills">
+          <span class="ctx-pill">3.1 Planejamento da avaliação</span>
+          <span class="ctx-pill">3.2 Resultados dos pares</span>
+          <span class="ctx-pill">3.3 Ajustes — focus handling &amp; Lei de Fitts</span>
+          <span class="ctx-pill">3.4 Peer review</span>
+          <span class="ctx-pill">3.5 Reflexão final</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout info reveal d2" style="margin-bottom:20px;">
+      <div class="callout-icon">👥</div>
+      <div class="callout-body">
+        <div class="callout-head">Metodologia</div>
+        <div class="callout-text">
+          A validação é conduzida por <strong>colegas de turma</strong> que também estão realizando seus próprios trabalhos de Engenharia de Usabilidade em sistemas diferentes. Cada colega interage com o protótipo e avalia <strong>teoricamente</strong> se as soluções de design respondem aos problemas heurísticos levantados — aplicando os mesmos conceitos de IHC estudados em aula. Os feedbacks são registrados na WIKI do Moodle e orientam os ajustes finais.
+        </div>
+      </div>
+    </div>
+
+    <!-- Iframe protótipo (mesmo do Ciclo 2 para referência) -->
+    <div style="
+      background: #0a1f44;
+      border-radius: 20px;
+      padding: 28px 28px 0;
+      box-shadow: 0 24px 64px rgba(10,31,68,0.22), 0 4px 16px rgba(10,31,68,0.12);
+      position: relative;
+      overflow: hidden;
+    ">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+        <div style="display:flex; gap:6px; flex-shrink:0;">
+          <div style="width:12px;height:12px;border-radius:50%;background:#ff5f57;"></div>
+          <div style="width:12px;height:12px;border-radius:50%;background:#febc2e;"></div>
+          <div style="width:12px;height:12px;border-radius:50%;background:#28c840;"></div>
+        </div>
+        <div style="
+          flex:1; background:rgba(255,255,255,0.08); border-radius:7px;
+          padding: 5px 12px; display:flex; align-items:center; gap:6px;
+        ">
+          <span style="font-size:11px; opacity:.5;">🔒</span>
+          <span style="font-size:11.5px; color:rgba(255,255,255,0.55); font-family:var(--mono); letter-spacing:0.2px;">
+            moni.sistemas.ufsc.br · protótipo interativo — Ciclo 3
+          </span>
+        </div>
+        <a href="prototipo/index.html" target="_blank" style="
+          flex-shrink:0;
+          display:inline-flex; align-items:center; gap:6px;
+          background: var(--blue-500); color:#fff;
+          font-family: var(--sans); font-size:12px; font-weight:700;
+          padding: 6px 14px; border-radius:8px; text-decoration:none;
+          white-space:nowrap;
+          transition: background .15s, transform .15s;
+          box-shadow: 0 2px 8px rgba(46,116,255,0.35);
+        "
+        onmouseover="this.style.background='#1a5ce8';this.style.transform='translateY(-1px)'"
+        onmouseout="this.style.background='#2e74ff';this.style.transform=''"
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+          Abrir em tela cheia
+        </a>
+      </div>
+      <div style="
+        border-radius: 10px 10px 0 0;
+        overflow: hidden;
+        height: 540px;
+        box-shadow: 0 0 0 1px rgba(255,255,255,0.07) inset;
+        position: relative;
+      ">
+        <iframe
+          src="prototipov2/index.html"
+          title="Protótipo MONI — Ciclo 3"
+          style="width:100%; height:100%; border:none; display:block;"
+          loading="lazy"
+        ></iframe>
+      </div>
+    </div>
+
+    <p style="margin-top:14px; font-size:12px; color:var(--gray-400); text-align:center; font-family:var(--mono); letter-spacing:0.3px;">
+      ↑ protótipo de referência para a avaliação do Ciclo 3
+    </p>
+
   </div>
 
 </main>
