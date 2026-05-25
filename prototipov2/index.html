@@ -166,6 +166,7 @@ const IcoAlert    = ({s=18}) => <Svg size={s}><path d="M10.29 3.86L1.82 18a2 2 0
 const IcoSend     = ({s=16}) => <Svg size={s}><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></Svg>;
 const IcoSearch   = ({s=14}) => <Svg size={s}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></Svg>;
 const IcoExtLink  = ({s=14}) => <Svg size={s}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></Svg>;
+const IcoEdit = ({s=15}) => <Svg size={s}><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></Svg>;
 const IcoReader   = ({s=16}) => <Svg size={s} sw={1.8}>
   <circle cx="12" cy="5" r="2.5" fill="currentColor" stroke="none"/>
   <path d="M8 9.5c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2" fill="currentColor" stroke="none"/>
@@ -191,7 +192,7 @@ const NAV = [
         ],
       },
       { id: 'faltas',     label: 'Consulta de Faltas',       Icon: IcoActivity },
-      { id: 'atividades', label: 'Registro de Atividades', Icon: IcoActivity },
+      { id: 'atividades', label: 'Registro de Atividades', Icon: IcoPlus },
       { id: 'relatorio',  label: 'Relatório do Monitor',   Icon: IcoFile },
     ],
   },
@@ -839,7 +840,7 @@ function HomePage({ onNav, showAlert, font }) {
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 13 }}>
           {[
-            { id: 'atividades', label: 'Registro de\nAtividades',  Icon: IcoActivity, primary: true },
+            { id: 'atividades', label: 'Registro de\nAtividades',  Icon: IcoPlus, primary: true },
             { id: 'horario',    label: 'Horário da\nMonitoria',    Icon: IcoClock },
             { id: 'plano',      label: 'Plano de\nAtividades',     Icon: IcoCalendar },
             { id: 'manual',     label: 'Manual',                   Icon: IcoInfo },
