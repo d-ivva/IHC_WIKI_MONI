@@ -1020,8 +1020,9 @@ function SchedulePage({ font, onScheduleSubmit }) {
           <span style={{ color:T.blueMid }}><IcoPlus /></span>
           <span style={{ fontWeight:700, fontSize:14, color:T.text }}>Adicionar Horário</span>
         </div>
-        <div style={{ padding:'20px 22px' }}>
-          <div style={{ display:'grid', gridTemplateColumns:'1.8fr 1fr 1fr 1.7fr auto', gap:14, alignItems:'start' }}>
+        <div style={{ padding:'20px 22px', display:'flex', flexDirection:'column', gap:14 }}>
+          {/* Linha 1: Dia + Início + Fim */}
+          <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr 1fr', gap:14, alignItems:'start' }}>
             <Field label="Dia da Semana *" err={ferrs.day} font={font}>
               <select value={form.day} onChange={e => setF('day', e.target.value)} onFocus={focus} onBlur={blur}
                 style={{ ...inp(!!ferrs.day), cursor:'pointer', appearance:'none',
@@ -1037,16 +1038,21 @@ function SchedulePage({ font, onScheduleSubmit }) {
             <Field label="Horário Final *" err={ferrs.end} font={font}>
               <TimePicker value={form.end} onChange={v => setF('end', v)} hasErr={!!ferrs.end} />
             </Field>
-            <Field label="Local da Monitoria *" err={ferrs.local} font={font}>
-              <input type="text" value={form.local} placeholder="Ex: Lab 207 — Bloco C"
-                onChange={e => setF('local',e.target.value)} onFocus={focus} onBlur={blur} style={inp(!!ferrs.local)} />
-            </Field>
+          </div>
+          {/* Linha 2: Local + Botão */}
+          <div style={{ display:'flex', gap:14, alignItems:'flex-start' }}>
+            <div style={{ flex:1 }}>
+              <Field label="Local da Monitoria *" err={ferrs.local} font={font}>
+                <input type="text" value={form.local} placeholder="Ex: Laboratório 207 — Bloco C"
+                  onChange={e => setF('local',e.target.value)} onFocus={focus} onBlur={blur} style={inp(!!ferrs.local)} />
+              </Field>
+            </div>
             <button onClick={handleAdd} style={{
               marginTop:20, padding:'9px 22px', borderRadius:8, border:'none',
               background:T.blueMid, color:'#fff',
               fontWeight:700, fontSize:13, fontFamily:font,
               cursor:'pointer', display:'flex', alignItems:'center', gap:6,
-              whiteSpace:'nowrap', transition:'background .15s',
+              whiteSpace:'nowrap', transition:'background .15s', flexShrink:0,
               boxShadow:`0 2px 8px rgba(27,80,160,0.22)`,
             }}
             onMouseEnter={e => e.currentTarget.style.background = T.blueDark}
