@@ -1,12 +1,1353 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ciclo 3</title>
-    <h1><strong>Em breve...</strong></h1>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MONI — Redesign v2 · UFSC</title>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body, #root { height: 100%; }
+  @keyframes fadeUp   { from { opacity:0; transform:translateY(7px) } to { opacity:1; transform:none } }
+  @keyframes slideIn  { from { opacity:0; transform:translateX(16px) } to { opacity:1; transform:none } }
+  @keyframes goldPulse { 0%{box-shadow:0 0 0 0 rgba(232,168,0,.4)} 70%{box-shadow:0 0 0 8px rgba(232,168,0,0)} 100%{box-shadow:0 0 0 0 rgba(232,168,0,0)} }
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(0,0,0,.12); border-radius: 3px; }
+</style>
 </head>
 <body>
-    
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+/* ══════════════════════════════════════════════════════
+   DESIGN TOKENS  (page / content area)
+══════════════════════════════════════════════════════ */
+const T = {
+  bg:          '#edf0f8',        // cool academic off-white
+  white:       '#ffffff',
+  blue:        '#1b50a0',        // UFSC cobalt blue (wordmark)
+  blueDark:    '#0e3066',
+  blueMid:     '#2462b8',
+  blueLight:   '#e8eef8',
+  gold:        '#e8a800',        // UFSC crest gold (torch / lower shield)
+  goldLight:   '#fdf4d0',
+  green:       '#166534',
+  greenMid:    '#16a34a',
+  greenBg:     '#f0fdf4',
+  greenBdr:    '#86efac',
+  red:         '#991b1b',
+  redBg:       '#fef2f2',
+  redBdr:      '#fca5a5',
+  warnDark:    '#7c3a00',
+  warnMid:     '#d97706',
+  warnBg:      '#fffbeb',
+  warnBdr:     '#fcd34d',
+  text:        '#0d1a2e',
+  textMid:     '#2c3d56',
+  textMuted:   '#607090',
+  border:      '#dce5f2',
+  borderMid:   '#c3cfe0',
+};
+
+/* ══════════════════════════════════════════════════════
+   SIDEBAR THEMES
+   Each theme drives ALL sidebar colors.
+   Accent color is the single clearest visual signal.
+══════════════════════════════════════════════════════ */
+const THEMES = {
+  azul: {
+    id: 'azul',
+    name: 'Azul + Ouro',
+    // Structure colors
+    bg:           '#091d38',       // very deep shield-blue
+    divider:      'rgba(255,255,255,0.07)',
+    // Brand accent line
+    accentLine:   'linear-gradient(90deg,#e8a800 0%,rgba(232,168,0,0.25) 55%,transparent 100%)',
+    // User chip
+    userBg:       'rgba(255,255,255,0.08)',
+    userBdr:      'rgba(232,168,0,0.40)',
+    userInitials: '#e8a800',
+    // Group labels
+    grpText:      'rgba(255,255,255,0.36)',    // intentionally subdued — labels, not destinations
+    grpActiveText:'rgba(255,255,255,0.75)',
+    grpDot:       '#e8a800',
+    // Items — bumped opacity for better contrast/legibility
+    itemInactive: 'rgba(255,255,255,0.58)',
+    itemHoverBg:  'rgba(255,255,255,0.08)',
+    itemHoverTxt: 'rgba(255,255,255,0.92)',
+    // Active item — THREE simultaneous signals
+    activeTxt:    '#ffffff',
+    activeFw:     700,
+    activeBg:     'linear-gradient(90deg,rgba(232,168,0,.15) 0%,rgba(232,168,0,.05) 65%,transparent 100%)',
+    activeBdr:    '#e8a800',
+    activeIcon:   '#f0b800',
+    // Logout
+    logoutTxt:    'rgba(255,255,255,0.35)',
+  },
+  verde: {
+    id: 'verde',
+    name: 'Verde Floresta',
+    bg:           '#081e12',
+    divider:      'rgba(255,255,255,0.07)',
+    accentLine:   'linear-gradient(90deg,#4ade80 0%,rgba(74,222,128,0.20) 55%,transparent 100%)',
+    userBg:       'rgba(255,255,255,0.08)',
+    userBdr:      'rgba(74,222,128,0.38)',
+    userInitials: '#4ade80',
+    grpText:      'rgba(255,255,255,0.30)',
+    grpActiveText:'rgba(255,255,255,0.68)',
+    grpDot:       '#4ade80',
+    itemInactive: 'rgba(255,255,255,0.58)',
+    itemHoverBg:  'rgba(255,255,255,0.08)',
+    itemHoverTxt: 'rgba(255,255,255,0.92)',
+    activeTxt:    '#ffffff',
+    activeFw:     700,
+    activeBg:     'linear-gradient(90deg,rgba(74,222,128,.15) 0%,rgba(74,222,128,.05) 65%,transparent 100%)',
+    activeBdr:    '#4ade80',
+    activeIcon:   '#4ade80',
+    logoutTxt:    'rgba(255,255,255,0.35)',
+  },
+  grafite: {
+    id: 'grafite',
+    name: 'Grafite Moderno',
+    bg:           '#161e2d',
+    divider:      'rgba(255,255,255,0.07)',
+    accentLine:   'linear-gradient(90deg,#60a5fa 0%,rgba(96,165,250,0.20) 55%,transparent 100%)',
+    userBg:       'rgba(255,255,255,0.08)',
+    userBdr:      'rgba(96,165,250,0.38)',
+    userInitials: '#60a5fa',
+    grpText:      'rgba(255,255,255,0.30)',
+    grpActiveText:'rgba(255,255,255,0.68)',
+    grpDot:       '#60a5fa',
+    itemInactive: 'rgba(255,255,255,0.58)',
+    itemHoverBg:  'rgba(255,255,255,0.08)',
+    itemHoverTxt: 'rgba(255,255,255,0.92)',
+    activeTxt:    '#ffffff',
+    activeFw:     700,
+    activeBg:     'linear-gradient(90deg,rgba(96,165,250,.16) 0%,rgba(96,165,250,.05) 65%,transparent 100%)',
+    activeBdr:    '#60a5fa',
+    activeIcon:   '#60a5fa',
+    logoutTxt:    'rgba(255,255,255,0.35)',
+  },
+};
+
+/* ══════════════════════════════════════════════════════
+   SVG ICONS
+══════════════════════════════════════════════════════ */
+const Svg = ({ size=16, sw=2, children, style={} }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+       stroke="currentColor" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round"
+       style={style}>
+    {children}
+  </svg>
+);
+const IcoHome     = ({s=16}) => <Svg size={s}><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></Svg>;
+const IcoMonitor  = ({s=16}) => <Svg size={s}><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></Svg>;
+const IcoGrad     = ({s=16}) => <Svg size={s}><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></Svg>;
+const IcoFolder   = ({s=16}) => <Svg size={s}><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></Svg>;
+const IcoClock    = ({s=16}) => <Svg size={s}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></Svg>;
+const IcoFile     = ({s=16}) => <Svg size={s}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></Svg>;
+const IcoCalendar = ({s=16}) => <Svg size={s}><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></Svg>;
+const IcoActivity = ({s=16}) => <Svg size={s}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></Svg>;
+const IcoShield   = ({s=16}) => <Svg size={s}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></Svg>;
+const IcoInfo     = ({s=16}) => <Svg size={s}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></Svg>;
+const IcoUser     = ({s=16}) => <Svg size={s}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></Svg>;
+const IcoLogout   = ({s=16}) => <Svg size={s}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></Svg>;
+const IcoChevD    = ({open}) => <Svg size={14} sw={2.5} style={{transform:open?'none':'rotate(-90deg)',transition:'transform .2s'}}><polyline points="6 9 12 15 18 9"/></Svg>;
+const IcoCheck    = ({s=16}) => <Svg size={s} sw={2.5}><polyline points="20 6 9 17 4 12"/></Svg>;
+const IcoX        = ({s=15}) => <Svg size={s} sw={2.5}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></Svg>;
+const IcoPlus     = ({s=15}) => <Svg size={s} sw={2.5}><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></Svg>;
+const IcoTrash    = ({s=15}) => <Svg size={s}><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></Svg>;
+const IcoAlert    = ({s=18}) => <Svg size={s}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></Svg>;
+const IcoSend     = ({s=16}) => <Svg size={s}><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></Svg>;
+const IcoSearch   = ({s=14}) => <Svg size={s}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></Svg>;
+const IcoExtLink  = ({s=14}) => <Svg size={s}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></Svg>;
+const IcoReader   = ({s=16}) => <Svg size={s} sw={1.8}>
+  <circle cx="12" cy="5" r="2.5" fill="currentColor" stroke="none"/>
+  <path d="M8 9.5c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2" fill="currentColor" stroke="none"/>
+  <path d="M5 11 Q12 8 19 11 L18 19 Q12 16.5 6 19 Z" fill="currentColor" stroke="none"/>
+  <path d="M12 9.5 L12 19" stroke="white" strokeWidth="1.2" fill="none"/>
+  <path d="M5 11 Q5.5 10.2 6.5 10.5" stroke="none"/>
+</Svg>;
+const IcoTeacher  = ({s=16}) => <Svg size={s}><circle cx="5" cy="4" r="2"/><path d="M2 21v-4c0-1.7 1.3-3 3-3s3 1.3 3 3v4"/><rect x="10" y="3" width="12" height="9" rx="1.5"/><line x1="7.5" y1="13" x2="15" y2="8" strokeWidth="1.5"/></Svg>;
+
+/* ══════════════════════════════════════════════════════
+   NAV STRUCTURE
+══════════════════════════════════════════════════════ */
+const NAV = [
+  {
+    id: 'monitor', label: 'Monitor', Icon: IcoGrad,
+    items: [
+      {
+        id: 'cadastro', label: 'Cadastro da Monitoria', Icon: IcoFile,
+        children: [
+          { id: 'termo',   label: 'Termo de Compromisso', Icon: IcoFile },
+          { id: 'plano',   label: 'Plano de Atividades',  Icon: IcoCalendar },
+          { id: 'horario', label: 'Horário da Monitoria', Icon: IcoClock },
+        ],
+      },
+      { id: 'faltas',     label: 'Consulta de Faltas',       Icon: IcoActivity },
+      { id: 'atividades', label: 'Registro de Atividades', Icon: IcoActivity },
+      { id: 'relatorio',  label: 'Relatório do Monitor',   Icon: IcoFile },
+    ],
+  },
+  {
+    id: 'aluno', label: 'Aluno', Icon: IcoGrad,
+    items: [
+      { id: 'hor-aluno', label: 'Consulta de Horários e Planos dos Monitores', Icon: IcoClock },
+      { id: 'avaliacao', label: 'Registro de Avaliação da Monitoria',        Icon: IcoFile },
+      { id: 'instrucao', label: 'Instrução Normativa Indígena/Quilombola',           Icon: IcoInfo },
+    ],
+  },
+  {
+    id: 'anteriores', label: 'Monitorias Anteriores', Icon: IcoFolder,
+    items: [
+      { id: 'rel-ant', label: 'Relatórios de Trabalho e Certificados',       Icon: IcoFile },
+      { id: 'irpf',    label: 'Informe de Rendimentos IRPF', Icon: IcoFile },
+    ],
+  },
+  {
+    id: 'regulamentos', label: 'Regulamentação e Guias', Icon: IcoShield,
+    items: [
+      { id: 'manual',    label: 'Manual',              Icon: IcoInfo },
+      { id: 'resolucao', label: 'Resolução Normativa', Icon: IcoShield },
+      { id: 'edital',    label: 'Edital de Seleção de Monitores', Icon: IcoExtLink, href: 'https://souufsc.ara.ufsc.br/oportunidades/' },
+    ],
+  },
+];
+
+const PAGE_META = {
+  home:        { title: 'Início',                        crumbs: ['Início'] },
+  cadastro:    { title: 'Cadastro da Monitoria',         crumbs: ['Monitor', 'Cadastro da Monitoria'] },
+  horario:     { title: 'Horário da Monitoria',          crumbs: ['Monitor', 'Cadastro da Monitoria', 'Horário da Monitoria'] },
+  termo:       { title: 'Termo de Compromisso',          crumbs: ['Monitor', 'Cadastro da Monitoria', 'Termo de Compromisso'] },
+  plano:       { title: 'Plano de Atividades',           crumbs: ['Monitor', 'Cadastro da Monitoria', 'Plano de Atividades'] },
+  faltas:      { title: 'Consultar Faltas',              crumbs: ['Monitor', 'Consultar Faltas'] },
+  atividades:  { title: 'Registro de Atividades',        crumbs: ['Monitor', 'Registro de Atividades'] },
+  relatorio:   { title: 'Relatório do Monitor',          crumbs: ['Monitor', 'Relatório do Monitor'] },
+  'hor-aluno': { title: 'Horário e Plano de Atividades', crumbs: ['Aluno', 'Horário e Plano de Atividades'] },
+  avaliacao:   { title: 'Avaliação da Monitoria',        crumbs: ['Aluno', 'Avaliação da Monitoria'] },
+  instrucao:   { title: 'Instrução Normativa',           crumbs: ['Aluno', 'Instrução Normativa'] },
+  'rel-ant':   { title: 'Relatório de Trabalho',         crumbs: ['Monitorias Anteriores', 'Relatório de Trabalho'] },
+  irpf:        { title: 'Informe de Rendimentos IRPF',   crumbs: ['Monitorias Anteriores', 'Informe de Rendimentos'] },
+  manual:      { title: 'Manual',                        crumbs: ['Regulamentação e Guias', 'Manual'] },
+  resolucao:   { title: 'Resolução Normativa',           crumbs: ['Regulamentação e Guias', 'Resolução Normativa'] },
+};
+
+/* ══════════════════════════════════════════════════════
+   MONI WORDMARK  — SVG recreation of official logotype
+   M + [mortarboard cap] + Ni
+══════════════════════════════════════════════════════ */
+function MoniWordmark({ size = 22, color = '#ffffff' }) {
+  // Recreates the MONI logo: M + graduation cap (replaces O) + Ni
+  // Cap anatomy: diamond mortarboard board + dome + tassel
+  const capW = Math.round(size * 1.45);
+  const capH = Math.round(size * 1.18);
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 1, lineHeight: 1 }}>
+      <span style={{ fontSize: size, fontWeight: 800, color, letterSpacing: -0.5, fontFamily: 'inherit', display: 'block' }}>M</span>
+      <svg
+        width={capW} height={capH}
+        viewBox="0 0 54 46"
+        fill={color}
+        style={{ display: 'block', marginTop: Math.round(size * 0.04) }}
+      >
+        {/* Diamond mortarboard flat board — classic perspective view */}
+        <polygon points="25,2 52,14 25,26 0,14" />
+        {/* Cap dome / body — hemisphere below the board */}
+        <path d="M9 14 L9 31 Q26 44 43 31 L43 14" />
+        {/* Tassel string */}
+        <line x1="52" y1="14" x2="52" y2="38" stroke={color} strokeWidth="3.5" strokeLinecap="round" />
+        {/* Tassel end block */}
+        <rect x="47" y="36" width="10" height="7" rx="2" fill={color} />
+      </svg>
+      <span style={{ fontSize: size, fontWeight: 800, color, letterSpacing: -0.5, fontFamily: 'inherit', display: 'block' }}>Ni</span>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════
+   SIDEBAR SUB-GROUP  — expandable nested item (3rd level)
+══════════════════════════════════════════════════════ */
+function SidebarSubGroup({ hasActiveChild, icon, label, badge, th, open, onToggle, children }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <div>
+      <button
+        onClick={onToggle}
+        onMouseEnter={() => setHov(true)}
+        onMouseLeave={() => setHov(false)}
+        style={{
+          width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '7px 10px 7px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
+          fontFamily: 'inherit', textAlign: 'left', marginBottom: 2,
+          background: hasActiveChild ? th.activeBg : hov ? th.itemHoverBg : 'transparent',
+          borderLeft: `3px solid ${hasActiveChild ? th.activeBdr : 'transparent'}`,
+          color: hasActiveChild ? th.activeTxt : hov ? th.itemHoverTxt : th.itemInactive,
+          fontSize: 12.5, fontWeight: hasActiveChild ? th.activeFw : 400,
+          transition: 'color .14s, background .14s',
+        }}
+      >
+        <span style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+          <span style={{ color: hasActiveChild ? th.activeIcon : 'inherit', flexShrink: 0, display: 'flex' }}>{icon}</span>
+          <span style={{ lineHeight: 1.3 }}>{label}</span>
+        </span>
+        <span style={{ display:'flex', alignItems:'center', gap:6, flexShrink:0 }}>
+          {badge && (
+            <span style={{
+              background: '#ef4444', color: '#fff',
+              fontSize: 9.5, fontWeight: 800,
+              padding: '1px 6px', borderRadius: 10,
+            }}>{badge}</span>
+          )}
+          <span style={{ color: 'rgba(255,255,255,0.22)', display: 'flex', marginRight: 2 }}>
+            <IcoChevD open={open} />
+          </span>
+        </span>
+      </button>
+      {open && (
+        <div style={{ paddingLeft: 10, paddingBottom: 2 }}>{children}</div>
+      )}
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════
+   SIDEBAR ITEM  — full hover state via React
+   Three visual tiers make navigation unmistakable:
+   [label]  grpText (very dim)
+   [item]   itemInactive → itemHover on hover
+   [ACTIVE] activeTxt + activeBg gradient + activeBdr + activeIcon  ← gold
+══════════════════════════════════════════════════════ */
+function SidebarItem({ active, onClick, icon, label, badge, th, indent }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        width: '100%', display: 'flex', alignItems: 'center', gap: 9,
+        padding: indent ? '7px 10px 7px 14px' : '8px 10px',
+        borderRadius: 8, border: 'none', cursor: 'pointer', textAlign: 'left',
+        fontFamily: 'inherit',
+        /* Background: gradient when active, subtle when hover, transparent otherwise */
+        background: active ? th.activeBg : hov ? th.itemHoverBg : 'transparent',
+        /* Left border — the clearest spatial anchor */
+        borderLeft: `3px solid ${active ? th.activeBdr : 'transparent'}`,
+        /* Text color — stark contrast between tiers */
+        color: active ? th.activeTxt : hov ? th.itemHoverTxt : th.itemInactive,
+        fontSize: 12.5,
+        fontWeight: active ? th.activeFw : 400,
+        transition: 'color .14s, background .14s',
+        marginBottom: 2,
+      }}
+    >
+      {/* Icon: accent color when active = second visual signal */}
+      <span style={{ color: active ? th.activeIcon : 'inherit', flexShrink: 0, display: 'flex' }}>
+        {icon}
+      </span>
+      <span style={{ flex: 1, lineHeight: 1.3 }}>{label}</span>
+      {/* Badge: pending action indicator */}
+      {badge && (
+        <span style={{
+          background: '#ef4444', color: '#fff',
+          fontSize: 9.5, fontWeight: 800,
+          padding: '1px 6px', borderRadius: 10, flexShrink: 0,
+        }}>{badge}</span>
+      )}
+    </button>
+  );
+}
+
+/* ══════════════════════════════════════════════════════
+   SIDEBAR
+══════════════════════════════════════════════════════ */
+function Sidebar({ page, onNav, th, hasPending }) {
+  /* ── open/close state for top-level groups ── */
+  const [open, setOpen] = useState(() => {
+    const s = { monitor: true, aluno: false, anteriores: false, regulamentos: false };
+    NAV.forEach(g => {
+      if (g.items.some(i => i.id === page || (i.children && i.children.some(c => c.id === page))))
+        s[g.id] = true;
+    });
+    return s;
+  });
+
+  /* ── open/close state for nested sub-groups ── */
+  const [subOpen, setSubOpen] = useState(() => {
+    const s = { cadastro: false };
+    NAV.forEach(g => g.items.forEach(item => {
+      if (item.children && item.children.some(c => c.id === page)) s[item.id] = true;
+    }));
+    return s;
+  });
+
+  /* ── search query ── */
+  const [q, setQ] = useState('');
+
+  /* auto-expand groups that have matching items when searching */
+  useEffect(() => {
+    if (!q.trim()) return;
+    const lq = q.toLowerCase();
+    const patch = {};
+    NAV.forEach(g => {
+      if (g.items.some(i =>
+        i.label.toLowerCase().includes(lq) ||
+        (i.children && i.children.some(c => c.label.toLowerCase().includes(lq)))
+      )) patch[g.id] = true;
+    });
+    setOpen(p => ({ ...p, ...patch }));
+    // also expand sub-groups with matching children
+    const subPatch = {};
+    NAV.forEach(g => g.items.forEach(item => {
+      if (item.children && item.children.some(c => c.label.toLowerCase().includes(lq)))
+        subPatch[item.id] = true;
+    }));
+    setSubOpen(p => ({ ...p, ...subPatch }));
+  }, [q]);
+
+  /* auto-expand on page change */
+  useEffect(() => {
+    NAV.forEach(g => {
+      if (g.items.some(i => i.id === page || (i.children && i.children.some(c => c.id === page))))
+        setOpen(p => ({ ...p, [g.id]: true }));
+      g.items.forEach(item => {
+        if (item.children && item.children.some(c => c.id === page))
+          setSubOpen(p => ({ ...p, [item.id]: true }));
+      });
+    });
+  }, [page]);
+
+  /* which top-level group owns the current page? */
+  const activeGroup = NAV.find(g =>
+    g.items.some(i => i.id === page || (i.children && i.children.some(c => c.id === page)))
+  )?.id;
+
+  /* filter helpers */
+  const lq = q.toLowerCase().trim();
+  const itemVisible = (item) => {
+    if (!lq) return true;
+    return item.label.toLowerCase().includes(lq) ||
+      (item.children && item.children.some(c => c.label.toLowerCase().includes(lq)));
+  };
+  const childVisible = (child) => !lq || child.label.toLowerCase().includes(lq);
+  const groupVisible = (group) => !lq || group.items.some(itemVisible);
+
+  return (
+    <aside style={{
+      width: 264, minWidth: 264, height: '100vh', position: 'sticky', top: 0,
+      background: th.bg, display: 'flex', flexDirection: 'column',
+      boxShadow: '4px 0 24px rgba(0,0,0,0.25)', overflowY: 'auto', overflowX: 'hidden', zIndex: 20,
+    }}>
+
+      {/* ── BRAND ZONE ── */}
+      <div style={{ padding: '20px 18px 0', flexShrink: 0 }}>
+        <button
+          onClick={() => onNav('home')}
+          title="Ir para Início"
+          style={{ background:'none', border:'none', cursor:'pointer', padding:0, display:'inline-flex', alignItems:'center', borderRadius:6, transition:'opacity .15s' }}
+          onMouseEnter={e => e.currentTarget.style.opacity='0.75'}
+          onMouseLeave={e => e.currentTarget.style.opacity='1'}
+        >
+          <MoniWordmark size={23} color="#ffffff" />
+        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 7 }}>
+          <div style={{
+            width: 14, height: 14, borderRadius: 3, flexShrink: 0,
+            background: 'rgba(27,80,160,0.55)', border: '1px solid rgba(27,80,160,0.35)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <span style={{ fontSize: 7, fontWeight: 800, color: 'rgba(255,255,255,0.85)', letterSpacing: -0.3, lineHeight: 1, fontFamily: 'inherit' }}>U</span>
+          </div>
+          <span style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.40)', letterSpacing: 0.2, lineHeight: 1.2 }}>
+            UFSC · Sistema de Monitoria
+          </span>
+        </div>
+        <div style={{ height: 2, marginTop: 14, marginBottom: 14, borderRadius: 2, background: th.accentLine }} />
+      </div>
+
+      {/* ── USER CHIP (sem subtítulo) ── */}
+      <div style={{ padding: '0 14px 12px', flexShrink: 0 }}>
+        <div style={{
+          background: th.userBg, borderRadius: 10, padding: '9px 12px',
+          display: 'flex', alignItems: 'center', gap: 10,
+          border: '1px solid rgba(255,255,255,0.06)',
+        }}>
+          <div style={{
+            width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
+            background: 'rgba(255,255,255,0.08)', border: `1.5px solid ${th.userBdr}`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: th.userInitials, fontSize: 12, fontWeight: 800, letterSpacing: -0.5,
+          }}>LF</div>
+          <div style={{ overflow: 'hidden' }}>
+            <div style={{ color: '#fff', fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              Lucas Ferreira
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── SEARCH ── */}
+      <div style={{ padding: '0 12px 10px', flexShrink: 0 }}>
+        <div style={{
+          position: 'relative',
+          background: 'rgba(255,255,255,0.07)',
+          borderRadius: 8, border: '1px solid rgba(255,255,255,0.09)',
+          transition: 'border-color .15s',
+        }}>
+          <span style={{
+            position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)',
+            color: 'rgba(255,255,255,0.30)', display: 'flex', pointerEvents: 'none',
+          }}><IcoSearch s={13} /></span>
+          <input
+            type="text"
+            placeholder="Buscar funcionalidade..."
+            value={q}
+            onChange={e => setQ(e.target.value)}
+            style={{
+              width: '100%', background: 'transparent', border: 'none', outline: 'none',
+              padding: '8px 28px 8px 30px', color: '#fff',
+              fontSize: 12, fontFamily: 'inherit',
+            }}
+            onFocus={e => e.currentTarget.parentElement.style.borderColor = 'rgba(255,255,255,0.22)'}
+            onBlur={e => e.currentTarget.parentElement.style.borderColor = 'rgba(255,255,255,0.09)'}
+          />
+          {q && (
+            <button onClick={() => setQ('')} style={{
+              position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)',
+              background: 'none', border: 'none', cursor: 'pointer',
+              color: 'rgba(255,255,255,0.35)', display: 'flex', padding: 0,
+            }}><IcoX s={12} /></button>
+          )}
+        </div>
+      </div>
+
+      {/* Divider */}
+      <div style={{ height: 1, background: th.divider, flexShrink: 0, margin: '0 14px 6px' }} />
+
+      {/* ── NAV ZONE ── */}
+      <nav style={{ padding: '4px 10px', flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
+
+        {/* Home — hide when searching and doesn't match */}
+        {(!lq || 'início'.includes(lq) || 'home'.includes(lq)) && (
+          <SidebarItem active={page === 'home'} onClick={() => onNav('home')} icon={<IcoHome />} label="Início" th={th} />
+        )}
+
+        <div style={{ height: 8 }} />
+
+        {NAV.filter(groupVisible).map((group, gi, arr) => {
+          const isOpen = open[group.id];
+          const hasActive = activeGroup === group.id;
+          const visibleItems = group.items.filter(itemVisible);
+
+          return (
+            <div key={group.id}>
+              {/* Group header */}
+              <button
+                onClick={() => setOpen(p => ({ ...p, [group.id]: !p[group.id] }))}
+                style={{
+                  width: '100%', display: 'flex', alignItems: 'center',
+                  justifyContent: 'space-between', gap: 6,
+                  padding: '7px 10px', borderRadius: 7, border: 'none',
+                  cursor: 'pointer', background: 'transparent', textAlign: 'left',
+                  transition: 'background .15s', fontFamily: 'inherit',
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                  <span style={{ color: hasActive ? th.grpActiveText : th.grpText, display: 'flex' }}>
+                    <group.Icon s={14} />
+                  </span>
+                  <span style={{
+                    fontSize: 10, fontWeight: 700, letterSpacing: 0.75, textTransform: 'uppercase',
+                    color: hasActive ? th.grpActiveText : th.grpText,
+                  }}>{group.label}</span>
+                  {(hasActive || (group.id === 'monitor' && hasPending)) && (
+                    <span style={{ width: 5, height: 5, borderRadius: '50%', background: th.grpDot, flexShrink: 0 }} />
+                  )}
+                </div>
+                <span style={{ color: 'rgba(255,255,255,0.20)' }}><IcoChevD open={isOpen} /></span>
+              </button>
+
+              {/* Sub-items */}
+              {(isOpen || lq) && (
+                <div style={{ paddingTop: 2, paddingBottom: 4 }}>
+                  {visibleItems.map(item => {
+                    /* item with nested children → SidebarSubGroup */
+                    if (item.children) {
+                      const visibleChildren = item.children.filter(childVisible);
+                      const hasActiveChild = item.children.some(c => c.id === page);
+                      return (
+                        <SidebarSubGroup
+                          key={item.id}
+                          hasActiveChild={hasActiveChild}
+                          icon={<item.Icon />}
+                          label={item.label}
+                          badge={item.id === 'cadastro' && hasPending ? '1' : undefined}
+                          th={th}
+                          open={subOpen[item.id] || !!lq}
+                          onToggle={() => setSubOpen(p => ({ ...p, [item.id]: !p[item.id] }))}
+                        >
+                          {visibleChildren.map(child => (
+                            <SidebarItem
+                              key={child.id}
+                              active={child.id === page}
+                              onClick={() => onNav(child.id)}
+                              icon={<child.Icon />}
+                              label={child.label}
+                              badge={child.id === 'horario' ? (hasPending ? '1' : undefined) : child.badge}
+                              th={th}
+                              indent
+                            />
+                          ))}
+                        </SidebarSubGroup>
+                      );
+                    }
+                    /* regular item */
+                    return (
+                      <SidebarItem
+                        key={item.id}
+                        active={item.id === page}
+                        onClick={() => item.href ? window.open(item.href, '_blank', 'noopener') : onNav(item.id)}
+                        icon={<item.Icon />}
+                        label={item.label}
+                        badge={item.badge}
+                        th={th}
+                        indent
+                      />
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Divider between groups */}
+              {gi < arr.length - 1 && (
+                <div style={{ height: 1, background: th.divider, margin: '6px 4px 8px' }} />
+              )}
+            </div>
+          );
+        })}
+
+        {/* No results */}
+        {lq && !NAV.some(groupVisible) && !('início'.includes(lq)) && (
+          <div style={{ padding: '24px 12px', textAlign: 'center', color: 'rgba(255,255,255,0.30)', fontSize: 12 }}>
+            Nenhum item encontrado
+          </div>
+        )}
+      </nav>
+
+      {/* ── LOGOUT ── */}
+      <div style={{ padding: '10px 18px 16px', borderTop: `1px solid ${th.divider}`, flexShrink: 0 }}>
+        <button style={{
+          display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', cursor: 'pointer',
+          color: th.logoutTxt, fontSize: 12.5, padding: '4px 0', transition: 'color .15s', fontFamily: 'inherit',
+        }}
+        onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.65)'}
+        onMouseLeave={e => e.currentTarget.style.color = th.logoutTxt}
+        >
+          <IcoLogout /> Sair do sistema
+        </button>
+      </div>
+    </aside>
+  );
+}
+
+/* ══════════════════════════════════════════════════════
+   TOP BAR
+══════════════════════════════════════════════════════ */
+function TopBar({ title, crumbs, font }) {
+  return (
+    <header style={{
+      background: T.white, borderBottom: `1px solid ${T.border}`,
+      height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      padding: '0 36px', flexShrink: 0,
+      boxShadow: '0 1px 8px rgba(27,80,160,0.07)',
+      fontFamily: font,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        {/* Blue accent bar next to title — visual anchor */}
+        <div style={{ width: 3, height: 28, borderRadius: 2, background: T.blue, flexShrink: 0 }} />
+        <div>
+          <div style={{ fontWeight: 700, fontSize: 15.5, color: T.text, letterSpacing: -0.2 }}>{title}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 1 }}>
+            {crumbs.map((c, i) => (
+              <span key={i} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                {i > 0 && <span style={{ color: T.borderMid, fontSize: 12 }}>›</span>}
+                <span style={{
+                  fontSize: 11.5,
+                  color: i === crumbs.length - 1 ? T.blueMid : T.textMuted,
+                  fontWeight: i === crumbs.length - 1 ? 500 : 400,
+                }}>{c}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        {/* UFSC institutional badge */}
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 5,
+          background: T.blueLight, border: `1px solid ${T.borderMid}`,
+          borderRadius: 6, padding: '5px 10px',
+        }}>
+          <svg width="8" height="8" viewBox="0 0 8 8">
+            <rect width="8" height="8" rx="1.5" fill={T.blue}/>
+          </svg>
+          <span style={{ fontSize: 11, fontWeight: 700, color: T.blue, letterSpacing: 0.4 }}>UFSC</span>
+        </div>
+        <div style={{ width: 1, height: 28, background: T.border }} />
+        <div style={{ textAlign: 'right' }}>
+          <div style={{ fontSize: 10.5, color: T.textMuted, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.3 }}>Semestre ativo</div>
+          <div style={{ fontSize: 13.5, fontWeight: 800, color: T.blue, letterSpacing: -0.2 }}>2026/1</div>
+        </div>
+        <div style={{ width: 1, height: 28, background: T.border }} />
+        <div style={{
+          width: 36, height: 36, borderRadius: '50%',
+          background: T.blueLight,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: T.blueMid, cursor: 'pointer',
+          border: `1px solid ${T.borderMid}`,
+        }}><IcoUser /></div>
+      </div>
+    </header>
+  );
+}
+
+/* ══════════════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════════════ */
+function Toast({ toast, onDismiss }) {
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(onDismiss, 5000);
+    return () => clearTimeout(t);
+  }, [toast]);
+
+  if (!toast) return null;
+  const ok = toast.type === 'success';
+  return (
+    <div style={{
+      position: 'fixed', bottom: 28, right: 28, zIndex: 9999,
+      background: ok ? T.greenBg : T.redBg,
+      border: `1px solid ${ok ? T.greenBdr : T.redBdr}`,
+      borderRadius: 14, padding: '16px 20px',
+      display: 'flex', alignItems: 'flex-start', gap: 13,
+      boxShadow: '0 8px 32px rgba(0,0,0,0.13)',
+      minWidth: 320, maxWidth: 420,
+      animation: 'slideIn .3s ease',
+    }}>
+      <span style={{ color: ok ? T.greenMid : T.red, flexShrink: 0, marginTop: 1 }}>
+        {ok ? <IcoCheck s={18} /> : <IcoAlert s={18} />}
+      </span>
+      <div style={{ flex: 1 }}>
+        <div style={{ fontWeight: 700, fontSize: 13.5, color: ok ? T.green : T.red }}>{toast.title}</div>
+        {toast.msg && <div style={{ fontSize: 12.5, color: T.textMuted, marginTop: 4, lineHeight: 1.5 }}>{toast.msg}</div>}
+      </div>
+      <button onClick={onDismiss} style={{ background: 'none', border: 'none', cursor: 'pointer', color: T.textMuted, display: 'flex', padding: 0, marginTop: 1 }}>
+        <IcoX />
+      </button>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════
+   HOME PAGE
+══════════════════════════════════════════════════════ */
+function HomePage({ onNav, showAlert, font }) {
+  return (
+    <div style={{ padding: '32px 40px', maxWidth: 980, animation: 'fadeUp .25s ease', fontFamily: font }}>
+
+      {/* Alert card — P3 fix */}
+      {showAlert && (
+        <div style={{
+          background: T.warnBg, border: `1px solid ${T.warnBdr}`,
+          borderLeft: `4px solid ${T.warnMid}`,
+          borderRadius: 14, padding: '18px 22px',
+          display: 'flex', alignItems: 'center', gap: 18, marginBottom: 34,
+          boxShadow: '0 2px 16px rgba(217,119,6,0.10)',
+          animation: 'goldPulse 2s ease-out',
+        }}>
+          <span style={{ color: T.warnMid, flexShrink: 0 }}><IcoAlert s={22} /></span>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, color: '#78350f', marginBottom: 4 }}>
+              Ação necessária — Cadastre seus horários de monitoria
+            </div>
+            <div style={{ fontSize: 13, color: '#92400e', lineHeight: 1.6 }}>
+              Para garantir o pagamento da bolsa é obrigatório cadastrar os horários semanais de atendimento dentro de 10 dias. Eles devem ser aprovados por seu supervisor.
+            </div>
+          </div>
+          <button
+            onClick={() => onNav('horario')}
+            style={{
+              padding: '11px 22px', borderRadius: 9, border: 'none', cursor: 'pointer',
+              background: T.warnMid, color: '#fff',
+              fontWeight: 700, fontSize: 13.5, whiteSpace: 'nowrap', flexShrink: 0,
+              boxShadow: '0 3px 12px rgba(217,119,6,0.30)',
+              transition: 'all .15s', fontFamily: font,
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = '#b45309'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = T.warnMid; e.currentTarget.style.transform = ''; }}
+          >
+            Cadastrar Horários Agora →
+          </button>
+        </div>
+      )}
+
+      {/* Welcome */}
+      <div style={{ marginBottom: 30 }}>
+        <h1 style={{ fontSize: 24, fontWeight: 800, color: T.text, letterSpacing: -0.5 }}>
+          Bem-vindo, Lucas Ferreira
+        </h1>
+        <p style={{ fontSize: 13.5, color: T.textMuted, marginTop: 5 }}>
+          Monitor Bolsista · CTS — Coord. Esp. Interd. de Tecnologias da Inf. e Comunic.
+        </p>
+        <p style={{ fontSize: 13, color: T.textMuted, marginTop: 4 }}>
+          <span style={{ color: T.textMuted, fontWeight: 500 }}>Supervisor</span> · Matheus Cataneo
+        </p>
+      </div>
+
+      {/* Status chips — top accent bar uses UFSC blue */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16, marginBottom: 34 }}>
+        {[
+          { l: 'Semestre Ativo', v: '2026/1',   s: 'Em andamento',   a: T.blue,    at: `2px solid ${T.blue}` },
+          { l: 'Disciplina',     v: 'CIT7580',  s: 'Algoritmos e Programação', a: '#0d6e71', at: '2px solid #0d6e71' },
+          { l: 'Tipo',           v: 'Bolsista', s: 'Nível Graduação', a: '#5b4fcf',  at: '2px solid #5b4fcf' },
+        ].map((c, i) => (
+          <div key={i} style={{
+            background: T.white, borderRadius: 13, padding: '18px 22px',
+            border: `1px solid ${T.border}`,
+            borderTop: c.at,
+            boxShadow: '0 1px 6px rgba(27,80,160,0.05)',
+          }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: T.textMuted, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 7 }}>{c.l}</div>
+            <div style={{ fontSize: 23, fontWeight: 800, color: c.a, letterSpacing: -0.5 }}>{c.v}</div>
+            <div style={{ fontSize: 12, color: T.textMuted, marginTop: 3 }}>{c.s}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Quick access */}
+      <div>
+        <div style={{ fontSize: 11, fontWeight: 700, color: T.textMuted, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 14 }}>
+          Acesso Rápido
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 13 }}>
+          {[
+            { id: 'atividades', label: 'Registro de\nAtividades',  Icon: IcoActivity, primary: true },
+            { id: 'horario',    label: 'Horário da\nMonitoria',    Icon: IcoClock },
+            { id: 'plano',      label: 'Plano de\nAtividades',     Icon: IcoCalendar },
+            { id: 'manual',     label: 'Manual',                   Icon: IcoInfo },
+          ].map(item => (
+            <button
+              key={item.id}
+              onClick={() => onNav(item.id)}
+              style={{
+                background: item.primary ? T.blue : T.white,
+                color: item.primary ? '#fff' : T.textMid,
+                border: `1px solid ${item.primary ? T.blue : T.border}`,
+                borderRadius: 12, padding: '18px 16px',
+                cursor: 'pointer', textAlign: 'left',
+                display: 'flex', flexDirection: 'column', gap: 13,
+                transition: 'all .15s', fontFamily: font,
+                boxShadow: item.primary ? '0 3px 14px rgba(27,80,160,0.22)' : '0 1px 5px rgba(0,0,0,0.04)',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = item.primary ? '0 8px 22px rgba(27,80,160,0.32)' : '0 5px 16px rgba(0,0,0,0.09)'; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = item.primary ? '0 3px 14px rgba(27,80,160,0.22)' : '0 1px 5px rgba(0,0,0,0.04)'; }}
+            >
+              <span style={{ opacity: item.primary ? 0.9 : 0.5 }}><item.Icon s={20} /></span>
+              <span style={{ fontSize: 13, fontWeight: 600, lineHeight: 1.4, whiteSpace: 'pre-line' }}>{item.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════
+   FIELD WRAPPER  — moved to module scope so React never
+   unmounts/remounts it on re-render (would steal focus)
+══════════════════════════════════════════════════════ */
+function Field({ label, err, children, font }) {
+  return (
+    <div style={{ display:'flex', flexDirection:'column', gap:4 }}>
+      <label style={{ fontSize:12, fontWeight:600, color:T.textMid, fontFamily:font }}>{label}</label>
+      {children}
+      <span style={{ fontSize:11, color:T.red, display:'flex', alignItems:'center', gap:4, minHeight:16, visibility: err ? 'visible' : 'hidden' }}>
+        <IcoAlert s={13}/> {err || ' '}
+      </span>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════
+   TIME PICKER  — two <select> dropdowns (hora + minuto)
+   Corrige violação da Lei de Fitts: área clicável ampla
+   em vez dos spinners minúsculos do input[type=time]
+══════════════════════════════════════════════════════ */
+function TimePicker({ value, onChange, hasErr }) {
+  // Fully controlled: derive H and M from parent value (HH:MM)
+  const h = value && value.length >= 5 ? value.substring(0, 2) : '';
+  const m = value && value.length >= 5 ? value.substring(3, 5) : '00';
+
+  const hours   = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'));
+  const minutes = Array.from({ length: 12 }, (_, i) => String(i * 5).padStart(2, '0'));
+
+  const handleH = hv => {
+    if (hv) onChange(`${hv}:${m || '00'}`);
+    else    onChange('');
+  };
+  const handleM = mv => {
+    if (h) onChange(`${h}:${mv}`);
+  };
+
+  const selStyle = err => ({
+    flex: 1, padding: '9px 10px', borderRadius: 8, fontSize: 13,
+    fontFamily: 'inherit', color: err ? T.red : T.text, background: T.white,
+    border: `1.5px solid ${err ? T.red : T.border}`,
+    transition: 'border-color .15s, box-shadow .15s',
+    outline: 'none', cursor: 'pointer', appearance: 'none',
+    textAlign: 'center', minWidth: 0,
+  });
+
+  const onFocusSel = e => {
+    e.target.style.borderColor = T.blueMid;
+    e.target.style.boxShadow   = `0 0 0 3px ${T.blueLight}`;
+  };
+  const onBlurSel = e => {
+    e.target.style.borderColor = hasErr ? T.red : T.border;
+    e.target.style.boxShadow   = 'none';
+  };
+
+  return (
+    <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+      <select value={h} onChange={e => handleH(e.target.value)}
+        onFocus={onFocusSel} onBlur={onBlurSel}
+        style={selStyle(hasErr)}>
+        <option value="">hh</option>
+        {hours.map(hv => <option key={hv} value={hv}>{hv}</option>)}
+      </select>
+      <span style={{ color:T.textMuted, fontWeight:700, fontSize:15, flexShrink:0, userSelect:'none', lineHeight:1 }}>:</span>
+      <select value={m} onChange={e => handleM(e.target.value)}
+        onFocus={onFocusSel} onBlur={onBlurSel}
+        style={{ ...selStyle(hasErr), opacity: h ? 1 : 0.45, pointerEvents: h ? 'auto' : 'none' }}>
+        {minutes.map(mv => <option key={mv} value={mv}>{mv}</option>)}
+      </select>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════
+   SCHEDULE PAGE  (P4 fixes)
+══════════════════════════════════════════════════════ */
+function SchedulePage({ font, onScheduleSubmit }) {
+  const DAYS = ['Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+  const blank = { day:'', start:'', end:'', local:'' };
+  const [form, setForm]           = useState(blank);
+  const [ferrs, setFerrs]         = useState({});
+  const [schedules, setSchedules] = useState([]);
+  const [toast, setToast]         = useState(null);
+  const [submitted, setSubmitted] = useState(false);
+
+  const setF = (k, v) => { setForm(p => ({...p,[k]:v})); setFerrs(p => ({...p,[k]:''})); if(submitted) setSubmitted(false); };
+
+  const validate = () => {
+    const e = {};
+    if (!form.day)          e.day   = 'Selecione o dia da semana';
+    if (!form.start)        e.start = 'Campo obrigatório';
+    if (!form.end)          e.end   = 'Campo obrigatório';
+    else if (form.start && form.end && form.end <= form.start) e.end = 'Deve ser posterior ao início';
+    else if (form.start && form.end) {
+      const [sh, sm] = form.start.split(':').map(Number);
+      const [eh, em] = form.end.split(':').map(Number);
+      const diffMin = (eh * 60 + em) - (sh * 60 + sm);
+      if (diffMin > 240) e.end = 'O intervalo não pode exceder 4 horas diárias';
+    }
+    if (!form.local.trim()) e.local = 'Campo obrigatório';
+    return e;
+  };
+
+  const handleAdd = () => {
+    const e = validate();
+    if (Object.keys(e).length) { setFerrs(e); return; }
+    setSchedules(p => [...p, {...form, id: Date.now(), situacao: 'Pendente'}]);
+    setForm(blank); setFerrs({}); if(submitted) setSubmitted(false);
+  };
+
+  const handleRemove = id => { setSchedules(p => p.filter(s => s.id !== id)); if(submitted) setSubmitted(false); };
+
+  const handleSubmit = () => {
+    if (!schedules.length) return;
+    setSubmitted(true);
+    setToast({ type:'success', title:`${schedules.length} horário${schedules.length>1?'s':''} cadastrado${schedules.length>1?'s':''} com sucesso!`, msg:'Registros enviados para aprovação do supervisor. Semestre 2026/1.' });
+    if (onScheduleSubmit) onScheduleSubmit();
+  };
+
+  const canSend = schedules.length > 0 && !submitted;
+
+  const inp = hasErr => ({
+    padding: '9px 12px', borderRadius: 8, fontSize: 13, width: '100%',
+    fontFamily: font, color: T.text, background: T.white,
+    border: `1.5px solid ${hasErr ? T.red : T.border}`,
+    transition: 'border-color .15s, box-shadow .15s',
+    outline: 'none',
+  });
+  const focus = e => { e.target.style.borderColor = T.blueMid; e.target.style.boxShadow = `0 0 0 3px ${T.blueLight}`; };
+  const blur  = e => { e.target.style.borderColor = T.border;  e.target.style.boxShadow = 'none'; };
+
+  return (
+    <div style={{ padding:'28px 40px', maxWidth:980, animation:'fadeUp .25s ease', fontFamily:font }}>
+
+      {/* Info banner */}
+      <div style={{ background:T.blueLight, border:`1px solid ${T.borderMid}`, borderRadius:11, padding:'12px 18px', marginBottom:26, display:'flex', gap:12, alignItems:'flex-start' }}>
+        <span style={{ color:T.blueMid, flexShrink:0, marginTop:1 }}><IcoInfo /></span>
+        <p style={{ fontSize:13, color:'#003080', lineHeight:1.6 }}>
+          Cadastre os horários semanais de atendimento do <strong>Monitor: Lucas Ferreira</strong> — Disciplina: <strong>CIT7596 · Sistemas Multimídias</strong>. Após adicionar, clique em <strong>Enviar para Aprovação</strong>.
+          Conforme o Regulamento, o monitor deve exercer as atividades em 12h semanais, não excedendo o limite de 4h diárias.
+        </p>
+      </div>
+
+      {/* Form card */}
+      <div style={{ background:T.white, borderRadius:14, border:`1px solid ${T.border}`, boxShadow:'0 2px 12px rgba(27,80,160,0.06)', marginBottom:20 }}>
+        <div style={{ padding:'14px 22px', borderBottom:`1px solid ${T.border}`, display:'flex', alignItems:'center', gap:9 }}>
+          <span style={{ color:T.blueMid }}><IcoPlus /></span>
+          <span style={{ fontWeight:700, fontSize:14, color:T.text }}>Adicionar Horário</span>
+        </div>
+        <div style={{ padding:'20px 22px' }}>
+          <div style={{ display:'grid', gridTemplateColumns:'1.8fr 1fr 1fr 1.7fr auto', gap:14, alignItems:'start' }}>
+            <Field label="Dia da Semana *" err={ferrs.day} font={font}>
+              <select value={form.day} onChange={e => setF('day', e.target.value)} onFocus={focus} onBlur={blur}
+                style={{ ...inp(!!ferrs.day), cursor:'pointer', appearance:'none',
+                  backgroundImage:`url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
+                  backgroundRepeat:'no-repeat', backgroundPosition:'right 11px center', paddingRight:34 }}>
+                <option value="">Selecione o dia...</option>
+                {DAYS.map(d => <option key={d} value={d}>{d}</option>)}
+              </select>
+            </Field>
+            <Field label="Horário Inicial *" err={ferrs.start} font={font}>
+              <TimePicker value={form.start} onChange={v => setF('start', v)} hasErr={!!ferrs.start} />
+            </Field>
+            <Field label="Horário Final *" err={ferrs.end} font={font}>
+              <TimePicker value={form.end} onChange={v => setF('end', v)} hasErr={!!ferrs.end} />
+            </Field>
+            <Field label="Local da Monitoria *" err={ferrs.local} font={font}>
+              <input type="text" value={form.local} placeholder="Ex: Lab 207 — Bloco C"
+                onChange={e => setF('local',e.target.value)} onFocus={focus} onBlur={blur} style={inp(!!ferrs.local)} />
+            </Field>
+            <button onClick={handleAdd} style={{
+              marginTop:20, padding:'9px 22px', borderRadius:8, border:'none',
+              background:T.blueMid, color:'#fff',
+              fontWeight:700, fontSize:13, fontFamily:font,
+              cursor:'pointer', display:'flex', alignItems:'center', gap:6,
+              whiteSpace:'nowrap', transition:'background .15s',
+              boxShadow:`0 2px 8px rgba(27,80,160,0.22)`,
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = T.blueDark}
+            onMouseLeave={e => e.currentTarget.style.background = T.blueMid}
+            ><IcoPlus /> Adicionar</button>
+          </div>
+        </div>
+      </div>
+
+      {/* Schedules table */}
+      <div style={{ background:T.white, borderRadius:14, border:`1px solid ${T.border}`, boxShadow:'0 2px 12px rgba(27,80,160,0.06)', marginBottom:20 }}>
+        <div style={{ padding:'14px 22px', borderBottom:`1px solid ${T.border}`, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+          <div style={{ display:'flex', alignItems:'center', gap:9 }}>
+            <span style={{ color:T.blueMid }}><IcoCalendar /></span>
+            <span style={{ fontWeight:700, fontSize:14, color:T.text }}>Horários Cadastrados</span>
+          </div>
+          <span style={{
+            padding:'3px 12px', borderRadius:20, fontSize:12, fontWeight:700,
+            background: schedules.length ? T.blueLight : '#f1f5f9',
+            color: schedules.length ? T.blueMid : T.textMuted,
+          }}>{schedules.length} {schedules.length === 1 ? 'horário' : 'horários'}</span>
+        </div>
+
+        {schedules.length === 0 ? (
+          <div style={{ padding:'48px 0', textAlign:'center' }}>
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke={T.borderMid}
+              strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"
+              style={{ display:'block', margin:'0 auto 14px' }}>
+              <rect x="3" y="4" width="18" height="18" rx="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            <div style={{ fontSize:14, fontWeight:600, color:T.textMuted, marginBottom:5 }}>Nenhum horário adicionado ainda</div>
+            <div style={{ fontSize:12.5, color:'#9ca3af' }}>Preencha o formulário acima e clique em <strong>Adicionar</strong></div>
+          </div>
+        ) : (
+          <table style={{ width:'100%', borderCollapse:'collapse' }}>
+            <thead>
+              <tr style={{ background:'#f8fafc' }}>
+                {['Dia da Semana','Início','Fim','Local da Monitoria','Situação',''].map((h,i) => (
+                  <th key={i} style={{ padding:'9px 22px', textAlign:'left', fontSize:11, fontWeight:700, color:T.textMuted, textTransform:'uppercase', letterSpacing:0.5, borderBottom:`1px solid ${T.border}` }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {schedules.map(s => (
+                <tr key={s.id} style={{ borderBottom:`1px solid ${T.border}` }}
+                  onMouseEnter={e => e.currentTarget.style.background='#f8fafc'}
+                  onMouseLeave={e => e.currentTarget.style.background=''}>
+                  <td style={{ padding:'13px 22px', fontSize:13.5, fontWeight:600, color:T.text }}>{s.day}</td>
+                  <td style={{ padding:'13px 22px', fontSize:13, color:T.textMid }}>{s.start}</td>
+                  <td style={{ padding:'13px 22px', fontSize:13, color:T.textMid }}>{s.end}</td>
+                  <td style={{ padding:'13px 22px', fontSize:13, color:T.textMid }}>{s.local}</td>
+                  <td style={{ padding:'13px 22px' }}>
+                    {(() => {
+                      const cfg = {
+                        'Pendente':  { bg: T.warnBg,   bdr: T.warnBdr,  txt: T.warnDark,  dot: T.warnMid  },
+                        'Aprovado':  { bg: T.greenBg,  bdr: T.greenBdr, txt: T.green,     dot: T.greenMid },
+                        'Rejeitado': { bg: T.redBg,    bdr: T.redBdr,   txt: T.red,       dot: '#f87171'  },
+                      }[s.situacao] || {};
+                      return (
+                        <span style={{
+                          display:'inline-flex', alignItems:'center', gap:5,
+                          padding:'3px 10px', borderRadius:20,
+                          fontSize:11.5, fontWeight:700,
+                          background: cfg.bg, border:`1px solid ${cfg.bdr}`, color: cfg.txt,
+                        }}>
+                          <span style={{ width:6, height:6, borderRadius:'50%', background:cfg.dot, flexShrink:0 }} />
+                          {s.situacao}
+                        </span>
+                      );
+                    })()}
+                  </td>
+                  <td style={{ padding:'13px 22px', textAlign:'right' }}>
+                    <button onClick={() => handleRemove(s.id)} style={{
+                      background:'none', border:'none', cursor:'pointer',
+                      color:'#fca5a5', padding:'4px 6px', borderRadius:5, display:'inline-flex', transition:'color .12s',
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.color = T.red}
+                    onMouseLeave={e => e.currentTarget.style.color = '#fca5a5'}
+                    ><IcoTrash /></button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      {/* Submit bar — P4 fix */}
+      <div style={{
+        background:T.white, borderRadius:12,
+        border: submitted ? `1.5px solid ${T.greenBdr}` : `1px solid ${T.border}`,
+        padding:'14px 22px', display:'flex', alignItems:'center', justifyContent:'space-between',
+        boxShadow:'0 2px 8px rgba(0,0,0,0.04)', transition:'border-color .3s',
+      }}>
+        <div>
+          {submitted ? (
+            <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+              <span style={{ color:T.greenMid }}><IcoCheck /></span>
+              <span style={{ fontSize:13.5, fontWeight:700, color:T.green }}>Horários enviados para aprovação do supervisor</span>
+            </div>
+          ) : schedules.length === 0 ? (
+            <div style={{ display:'flex', alignItems:'center', gap:7, color:T.textMuted }}>
+              <span style={{ opacity:0.6 }}><IcoAlert s={15}/></span>
+              <span style={{ fontSize:12.5 }}>Adicione ao menos um horário para habilitar o envio.</span>
+              </div>
+          ) : (
+            <div style={{ fontSize:13, color:T.textMid }}>
+              <strong>{schedules.length}</strong> horário{schedules.length>1?'s':''} pronto{schedules.length>1?'s':''} para enviar
+            </div>
+          )}
+        </div>
+        <button onClick={handleSubmit} disabled={!canSend} style={{
+          padding:'11px 30px', borderRadius:9,
+          border: submitted ? `1.5px solid ${T.greenBdr}` : 'none',
+          cursor: canSend ? 'pointer' : 'not-allowed',
+          background: submitted ? T.greenBg : canSend ? T.blue : '#e2e8f0',
+          color: submitted ? T.green : canSend ? '#fff' : '#94a3b8',
+          fontWeight:700, fontSize:14, fontFamily:font,
+          opacity: canSend || submitted ? 1 : 0.65,
+          transition:'all .2s',
+          boxShadow: canSend ? '0 3px 12px rgba(27,80,160,0.22)' : 'none',
+          display:'flex', alignItems:'center', gap:8,
+        }}
+        onMouseEnter={e => { if(canSend) { e.currentTarget.style.background=T.blueDark; e.currentTarget.style.transform='translateY(-1px)'; } }}
+        onMouseLeave={e => { if(canSend) { e.currentTarget.style.background=T.blue; e.currentTarget.style.transform=''; } }}
+        >
+          {submitted ? <><IcoCheck /> Enviado</> : <><IcoSend /> Enviar para Aprovação</>}
+        </button>
+      </div>
+
+      <Toast toast={toast} onDismiss={() => setToast(null)} />
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════
+   PLACEHOLDER
+══════════════════════════════════════════════════════ */
+function Placeholder({ title, font }) {
+  return (
+    <div style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', height:'55vh', animation:'fadeUp .25s ease', fontFamily:font }}>
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={T.borderMid} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom:16 }}>
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+      </svg>
+      <div style={{ fontWeight:700, fontSize:16, color:T.blue, marginBottom:7 }}>{title}</div>
+      <div style={{ fontSize:13, color:T.textMuted }}>Tela não incluída neste protótipo de entrega</div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════
+   TWEAKS PANEL
+══════════════════════════════════════════════════════ */
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "page": "home",
+  "showAlert": true,
+  "theme": "azul",
+  "font": "jakarta"
+}/*EDITMODE-END*/;
+
+function TweaksPanel({ state, set, onClose }) {
+  return (
+    <div style={{
+      position:'fixed', bottom:24, right:24, zIndex:9998,
+      background:'#fff', border:`1px solid ${T.border}`,
+      borderRadius:16, width:280,
+      boxShadow:'0 12px 40px rgba(0,0,0,0.14)',
+      fontFamily: state.font === 'jakarta' ? "'Plus Jakarta Sans',sans-serif" : "'Inter',sans-serif",
+      animation:'slideIn .25s ease',
+    }}>
+      <div style={{ padding:'14px 16px 12px', borderBottom:`1px solid ${T.border}`, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+        <span style={{ fontWeight:700, fontSize:13, color:T.blue }}>Tweaks</span>
+        <button onClick={onClose} style={{ background:'none', border:'none', cursor:'pointer', color:T.textMuted, display:'flex', padding:0 }}><IcoX /></button>
+      </div>
+      <div style={{ padding:'16px', display:'flex', flexDirection:'column', gap:16 }}>
+
+        {/* Tela */}
+        <TweakGroup label="Navegar para">
+          <TweakBtn active={state.page==='home'}    onClick={() => set('page','home')}>   Tela Home</TweakBtn>
+          <TweakBtn active={state.page==='horario'} onClick={() => set('page','horario')}>Horário da Monitoria</TweakBtn>
+        </TweakGroup>
+
+        {/* Tema sidebar */}
+        <TweakGroup label="Tema do menu lateral">
+          {Object.values(THEMES).map(th => (
+            <TweakBtnColor key={th.id} active={state.theme===th.id} color={th.activeBdr} bg={th.bg}
+              onClick={() => set('theme', th.id)}>{th.name}</TweakBtnColor>
+          ))}
+        </TweakGroup>
+
+        {/* Tipografia */}
+        <TweakGroup label="Tipografia">
+          <TweakBtn active={state.font==='inter'}   onClick={() => set('font','inter')}>Inter</TweakBtn>
+          <TweakBtn active={state.font==='jakarta'} onClick={() => set('font','jakarta')}>Plus Jakarta Sans</TweakBtn>
+        </TweakGroup>
+
+        {/* Alerta */}
+        <TweakGroup label="Alerta crítico (Home)">
+          <TweakBtn active={state.showAlert===true}  onClick={() => set('showAlert',true)}>Visível</TweakBtn>
+          <TweakBtn active={state.showAlert===false} onClick={() => set('showAlert',false)}>Oculto</TweakBtn>
+        </TweakGroup>
+
+        <div style={{ fontSize:11, color:T.textMuted, lineHeight:1.65, paddingTop:2 }}>
+          <strong>Dica:</strong> vá para <em>Horário da Monitoria</em>, adicione horários e clique em Enviar para testar o fluxo completo.
+        </div>
+      </div>
+    </div>
+  );
+}
+const TweakGroup = ({ label, children }) => (
+  <div>
+    <div style={{ fontSize:10, fontWeight:700, color:T.textMuted, textTransform:'uppercase', letterSpacing:0.6, marginBottom:7 }}>{label}</div>
+    <div style={{ display:'flex', flexDirection:'column', gap:5 }}>{children}</div>
+  </div>
+);
+const TweakBtn = ({ active, onClick, children }) => (
+  <button onClick={onClick} style={{
+    width:'100%', padding:'8px 12px', borderRadius:8, textAlign:'left',
+    border:`1.5px solid ${active ? T.blueMid : T.border}`,
+    background: active ? T.blueLight : '#f8fafc',
+    color: active ? T.blueMid : T.textMuted,
+    fontWeight: active ? 700 : 400, fontSize:12.5, cursor:'pointer',
+    transition:'all .12s', fontFamily:'inherit',
+  }}
+  onMouseEnter={e => { if(!active) e.currentTarget.style.borderColor = T.borderMid; }}
+  onMouseLeave={e => { if(!active) e.currentTarget.style.borderColor = T.border; }}
+  >{children}</button>
+);
+const TweakBtnColor = ({ active, onClick, color, bg, children }) => (
+  <button onClick={onClick} style={{
+    width:'100%', padding:'8px 12px', borderRadius:8, textAlign:'left',
+    border:`1.5px solid ${active ? color : T.border}`,
+    background: active ? bg : '#f8fafc',
+    color: active ? '#fff' : T.textMuted,
+    fontWeight: active ? 700 : 400, fontSize:12.5, cursor:'pointer',
+    transition:'all .12s', fontFamily:'inherit',
+    display:'flex', alignItems:'center', gap:8,
+  }}
+  onMouseEnter={e => { if(!active) e.currentTarget.style.borderColor = T.borderMid; }}
+  onMouseLeave={e => { if(!active) e.currentTarget.style.borderColor = T.border; }}
+  >
+    <span style={{ width:10, height:10, borderRadius:'50%', background:color, flexShrink:0 }} />
+    {children}
+  </button>
+);
+
+/* ══════════════════════════════════════════════════════
+   APP
+══════════════════════════════════════════════════════ */
+function App() {
+  const [page,      setPage]      = useState(TWEAK_DEFAULTS.page);
+  const [showAlert, setAlert]     = useState(true); // sempre true ao carregar — some só após envio (não persiste)
+  const [theme,     setTheme]     = useState(TWEAK_DEFAULTS.theme);
+  const [font,      setFont]      = useState(TWEAK_DEFAULTS.font);
+  const [tweaksOn,  setTweaksOn]  = useState(false);
+
+  const fontFace = font === 'jakarta' ? "'Plus Jakarta Sans', sans-serif" : "'Inter', sans-serif";
+  const th = THEMES[theme] || THEMES.azul;
+  const meta = PAGE_META[page] || { title: page, crumbs: ['MONI', page] };
+
+  /* Tweaks protocol */
+  useEffect(() => {
+    const h = e => {
+      if (e.data?.type === '__activate_edit_mode')   setTweaksOn(true);
+      if (e.data?.type === '__deactivate_edit_mode') setTweaksOn(false);
+    };
+    window.addEventListener('message', h);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', h);
+  }, []);
+
+  const set = (key, val) => {
+    if (key === 'page')      setPage(val);
+    if (key === 'showAlert') setAlert(val);
+    if (key === 'theme')     setTheme(val);
+    if (key === 'font')      setFont(val);
+    window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { [key]: val } }, '*');
+  };
+
+  return (
+    <div style={{ display:'flex', height:'100vh', overflow:'hidden', background:T.bg, fontFamily:fontFace }}>
+      <Sidebar page={page} onNav={setPage} th={th} hasPending={showAlert} />
+      <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden', minWidth:0 }}>
+        <TopBar title={meta.title} crumbs={meta.crumbs} font={fontFace} />
+        <main style={{ flex:1, overflowY:'auto', overflowX:'hidden' }}>
+          {page === 'home'    && <HomePage    onNav={setPage} showAlert={showAlert} font={fontFace} />}
+          {page === 'horario' && <SchedulePage font={fontFace} onScheduleSubmit={() => setAlert(false)} />}
+          {page !== 'home' && page !== 'horario' && <Placeholder title={meta.title} font={fontFace} />}
+        </main>
+      </div>
+      {tweaksOn && (
+        <TweaksPanel state={{ page, showAlert, theme, font }} set={set}
+          onClose={() => { setTweaksOn(false); window.parent.postMessage({ type:'__edit_mode_dismissed' },'*'); }} />
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
 </body>
 </html>
